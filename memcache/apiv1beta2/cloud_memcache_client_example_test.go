@@ -1,4 +1,4 @@
-// Copyright 2021 Google LLC
+// Copyright 2022 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,7 +26,29 @@ import (
 
 func ExampleNewCloudMemcacheClient() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := memcache.NewCloudMemcacheClient(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
+	defer c.Close()
+
+	// TODO: Use client.
+	_ = c
+}
+
+func ExampleNewCloudMemcacheRESTClient() {
+	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
+	c, err := memcache.NewCloudMemcacheRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
 	}
@@ -38,6 +60,11 @@ func ExampleNewCloudMemcacheClient() {
 
 func ExampleCloudMemcacheClient_ListInstances() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := memcache.NewCloudMemcacheClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -64,6 +91,11 @@ func ExampleCloudMemcacheClient_ListInstances() {
 
 func ExampleCloudMemcacheClient_GetInstance() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := memcache.NewCloudMemcacheClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -84,6 +116,11 @@ func ExampleCloudMemcacheClient_GetInstance() {
 
 func ExampleCloudMemcacheClient_CreateInstance() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := memcache.NewCloudMemcacheClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -109,6 +146,11 @@ func ExampleCloudMemcacheClient_CreateInstance() {
 
 func ExampleCloudMemcacheClient_UpdateInstance() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := memcache.NewCloudMemcacheClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -134,6 +176,11 @@ func ExampleCloudMemcacheClient_UpdateInstance() {
 
 func ExampleCloudMemcacheClient_UpdateParameters() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := memcache.NewCloudMemcacheClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -159,6 +206,11 @@ func ExampleCloudMemcacheClient_UpdateParameters() {
 
 func ExampleCloudMemcacheClient_DeleteInstance() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := memcache.NewCloudMemcacheClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -182,6 +234,11 @@ func ExampleCloudMemcacheClient_DeleteInstance() {
 
 func ExampleCloudMemcacheClient_ApplyParameters() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := memcache.NewCloudMemcacheClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -207,6 +264,11 @@ func ExampleCloudMemcacheClient_ApplyParameters() {
 
 func ExampleCloudMemcacheClient_ApplySoftwareUpdate() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := memcache.NewCloudMemcacheClient(ctx)
 	if err != nil {
 		// TODO: Handle error.

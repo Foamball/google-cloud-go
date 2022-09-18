@@ -23,12 +23,16 @@ import (
 	"time"
 
 	"cloud.google.com/go/internal/trace"
-	vkit "cloud.google.com/go/spanner/apiv1"
 	"github.com/golang/protobuf/proto"
+	"github.com/googleapis/gax-go/v2"
 	"google.golang.org/api/iterator"
 	sppb "google.golang.org/genproto/googleapis/spanner/v1"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+
+	vkit "cloud.google.com/go/spanner/apiv1"
 )
 
 // transactionID stores a transaction ID which uniquely identifies a transaction
@@ -73,8 +77,14 @@ type txReadOnly struct {
 	// qo provides options for executing a sql query.
 	qo QueryOptions
 
+	// ro provides options for reading rows from a database.
+	ro ReadOptions
+
 	// txOpts provides options for a transaction.
 	txOpts TransactionOptions
+
+	// commonTags for opencensus metrics
+	ct *commonTags
 }
 
 // TransactionOptions provides options for a transaction.
@@ -91,12 +101,21 @@ type TransactionOptions struct {
 	CommitPriority sppb.RequestOptions_Priority
 }
 
-func (to *TransactionOptions) requestPriority() sppb.RequestOptions_Priority {
-	return to.CommitPriority
-}
-
-func (to *TransactionOptions) requestTag() string {
-	return ""
+// merge combines two TransactionOptions that the input parameter will have higher
+// order of precedence.
+func (to TransactionOptions) merge(opts TransactionOptions) TransactionOptions {
+	merged := TransactionOptions{
+		CommitOptions:  to.CommitOptions.merge(opts.CommitOptions),
+		TransactionTag: to.TransactionTag,
+		CommitPriority: to.CommitPriority,
+	}
+	if opts.TransactionTag != "" {
+		merged.TransactionTag = opts.TransactionTag
+	}
+	if opts.CommitPriority != sppb.RequestOptions_PRIORITY_UNSPECIFIED {
+		merged.CommitPriority = opts.CommitPriority
+	}
+	return merged
 }
 
 // errSessionClosed returns error for using a recycled/destroyed session
@@ -133,6 +152,30 @@ type ReadOptions struct {
 	RequestTag string
 }
 
+// merge combines two ReadOptions that the input parameter will have higher
+// order of precedence.
+func (ro ReadOptions) merge(opts ReadOptions) ReadOptions {
+	merged := ReadOptions{
+		Index:      ro.Index,
+		Limit:      ro.Limit,
+		Priority:   ro.Priority,
+		RequestTag: ro.RequestTag,
+	}
+	if opts.Index != "" {
+		merged.Index = opts.Index
+	}
+	if opts.Limit > 0 {
+		merged.Limit = opts.Limit
+	}
+	if opts.Priority != sppb.RequestOptions_PRIORITY_UNSPECIFIED {
+		merged.Priority = opts.Priority
+	}
+	if opts.RequestTag != "" {
+		merged.RequestTag = opts.RequestTag
+	}
+	return merged
+}
+
 // ReadWithOptions returns a RowIterator for reading multiple rows from the
 // database. Pass a ReadOptions to modify the read operation.
 func (t *txReadOnly) ReadWithOptions(ctx context.Context, table string, keys KeySet, columns []string, opts *ReadOptions) (ri *RowIterator) {
@@ -156,10 +199,10 @@ func (t *txReadOnly) ReadWithOptions(ctx context.Context, table string, keys Key
 		// Might happen if transaction is closed in the middle of a API call.
 		return &RowIterator{err: errSessionClosed(sh)}
 	}
-	index := ""
-	limit := 0
-	prio := sppb.RequestOptions_PRIORITY_UNSPECIFIED
-	requestTag := ""
+	index := t.ro.Index
+	limit := t.ro.Limit
+	prio := t.ro.Priority
+	requestTag := t.ro.RequestTag
 	if opts != nil {
 		index = opts.Index
 		if opts.Limit > 0 {
@@ -172,7 +215,7 @@ func (t *txReadOnly) ReadWithOptions(ctx context.Context, table string, keys Key
 		contextWithOutgoingMetadata(ctx, sh.getMetadata()),
 		sh.session.logger,
 		func(ctx context.Context, resumeToken []byte) (streamingReceiver, error) {
-			return client.StreamingRead(ctx,
+			client, err := client.StreamingRead(ctx,
 				&sppb.ReadRequest{
 					Session:        t.sh.getID(),
 					Transaction:    ts,
@@ -184,6 +227,16 @@ func (t *txReadOnly) ReadWithOptions(ctx context.Context, table string, keys Key
 					Limit:          int64(limit),
 					RequestOptions: createRequestOptions(prio, requestTag, t.txOpts.TransactionTag),
 				})
+			if err != nil {
+				return client, err
+			}
+			md, err := client.Header()
+			if getGFELatencyMetricsFlag() && md != nil && t.ct != nil {
+				if err := createContextAndCaptureGFELatencyMetrics(ctx, t.ct, md, "ReadWithOptions"); err != nil {
+					trace.TracePrintf(ctx, nil, "Error in recording GFE Latency. Try disabling and rerunning. Error: %v", err)
+				}
+			}
+			return client, err
 		},
 		t.replaceSessionFunc,
 		t.setTimestamp,
@@ -212,7 +265,15 @@ func errMultipleRowsFound(table string, key Key, index string) error {
 // If no row is present with the given key, then ReadRow returns an error where
 // spanner.ErrCode(err) is codes.NotFound.
 func (t *txReadOnly) ReadRow(ctx context.Context, table string, key Key, columns []string) (*Row, error) {
-	iter := t.Read(ctx, table, key, columns)
+	return t.ReadRowWithOptions(ctx, table, key, columns, nil)
+}
+
+// ReadRowWithOptions reads a single row from the database. Pass a ReadOptions to modify the read operation.
+//
+// If no row is present with the given key, then ReadRowWithOptions returns an error where
+// spanner.ErrCode(err) is codes.NotFound.
+func (t *txReadOnly) ReadRowWithOptions(ctx context.Context, table string, key Key, columns []string, opts *ReadOptions) (*Row, error) {
+	iter := t.ReadWithOptions(ctx, table, key, columns, opts)
 	defer iter.Stop()
 	row, err := iter.Next()
 	switch err {
@@ -313,8 +374,9 @@ func createRequestOptions(prio sppb.RequestOptions_Priority, requestTag, transac
 func (t *txReadOnly) Query(ctx context.Context, statement Statement) *RowIterator {
 	mode := sppb.ExecuteSqlRequest_NORMAL
 	return t.query(ctx, statement, QueryOptions{
-		Mode:    &mode,
-		Options: t.qo.Options,
+		Mode:     &mode,
+		Options:  t.qo.Options,
+		Priority: t.qo.Priority,
 	})
 }
 
@@ -331,8 +393,9 @@ func (t *txReadOnly) QueryWithOptions(ctx context.Context, statement Statement, 
 func (t *txReadOnly) QueryWithStats(ctx context.Context, statement Statement) *RowIterator {
 	mode := sppb.ExecuteSqlRequest_PROFILE
 	return t.query(ctx, statement, QueryOptions{
-		Mode:    &mode,
-		Options: t.qo.Options,
+		Mode:     &mode,
+		Options:  t.qo.Options,
+		Priority: t.qo.Priority,
 	})
 }
 
@@ -340,8 +403,9 @@ func (t *txReadOnly) QueryWithStats(ctx context.Context, statement Statement) *R
 func (t *txReadOnly) AnalyzeQuery(ctx context.Context, statement Statement) (*sppb.QueryPlan, error) {
 	mode := sppb.ExecuteSqlRequest_PLAN
 	iter := t.query(ctx, statement, QueryOptions{
-		Mode:    &mode,
-		Options: t.qo.Options,
+		Mode:     &mode,
+		Options:  t.qo.Options,
+		Priority: t.qo.Priority,
 	})
 	defer iter.Stop()
 	for {
@@ -373,7 +437,17 @@ func (t *txReadOnly) query(ctx context.Context, statement Statement, options Que
 		func(ctx context.Context, resumeToken []byte) (streamingReceiver, error) {
 			req.ResumeToken = resumeToken
 			req.Session = t.sh.getID()
-			return client.ExecuteStreamingSql(ctx, req)
+			client, err := client.ExecuteStreamingSql(ctx, req)
+			if err != nil {
+				return client, err
+			}
+			md, err := client.Header()
+			if getGFELatencyMetricsFlag() && md != nil && t.ct != nil {
+				if err := createContextAndCaptureGFELatencyMetrics(ctx, t.ct, md, "query"); err != nil {
+					trace.TracePrintf(ctx, nil, "Error in recording GFE Latency. Try disabling and rerunning. Error: %v", err)
+				}
+			}
+			return client, err
 		},
 		t.replaceSessionFunc,
 		t.setTimestamp,
@@ -533,6 +607,7 @@ func (t *ReadOnlyTransaction) begin(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
+		var md metadata.MD
 		res, err = sh.getClient().BeginTransaction(contextWithOutgoingMetadata(ctx, sh.getMetadata()), &sppb.BeginTransactionRequest{
 			Session: sh.getID(),
 			Options: &sppb.TransactionOptions{
@@ -540,7 +615,14 @@ func (t *ReadOnlyTransaction) begin(ctx context.Context) error {
 					ReadOnly: buildTransactionOptionsReadOnly(t.getTimestampBound(), true),
 				},
 			},
-		})
+		}, gax.WithGRPCOptions(grpc.Header(&md)))
+
+		if getGFELatencyMetricsFlag() && md != nil && t.ct != nil {
+			if err := createContextAndCaptureGFELatencyMetrics(ctx, t.ct, md, "begin_BeginTransaction"); err != nil {
+				trace.TracePrintf(ctx, nil, "Error in recording GFE Latency. Try disabling and rerunning. Error: %v", err)
+			}
+		}
+
 		if isSessionNotFoundError(err) {
 			sh.destroy()
 			continue
@@ -786,7 +868,7 @@ func (t *ReadOnlyTransaction) WithTimestampBound(tb TimestampBound) *ReadOnlyTra
 //
 // See (*Client).ReadWriteTransaction for an example.
 //
-// Semantics
+// # Semantics
 //
 // Cloud Spanner can commit the transaction if all read locks it acquired are
 // still valid at commit time, and it is able to acquire write locks for all
@@ -799,7 +881,7 @@ func (t *ReadOnlyTransaction) WithTimestampBound(tb TimestampBound) *ReadOnlyTra
 // Spanner locks for any sort of mutual exclusion other than between Cloud
 // Spanner transactions themselves.
 //
-// Aborted transactions
+// # Aborted transactions
 //
 // Application code does not need to retry explicitly; RunInTransaction will
 // automatically retry a transaction if an attempt results in an abort. The lock
@@ -813,7 +895,7 @@ func (t *ReadOnlyTransaction) WithTimestampBound(tb TimestampBound) *ReadOnlyTra
 // retries a transaction can attempt; instead, it is better to limit the total
 // amount of wall time spent retrying.
 //
-// Idle transactions
+// # Idle transactions
 //
 // A transaction is considered idle if it has no outstanding reads or SQL
 // queries and has not started a read or SQL query within the last 10
@@ -867,8 +949,9 @@ func (t *ReadWriteTransaction) BufferWrite(ms []*Mutation) error {
 func (t *ReadWriteTransaction) Update(ctx context.Context, stmt Statement) (rowCount int64, err error) {
 	mode := sppb.ExecuteSqlRequest_NORMAL
 	return t.update(ctx, stmt, QueryOptions{
-		Mode:    &mode,
-		Options: t.qo.Options,
+		Mode:     &mode,
+		Options:  t.qo.Options,
+		Priority: t.qo.Priority,
 	})
 }
 
@@ -886,7 +969,14 @@ func (t *ReadWriteTransaction) update(ctx context.Context, stmt Statement, opts 
 	if err != nil {
 		return 0, err
 	}
-	resultSet, err := sh.getClient().ExecuteSql(contextWithOutgoingMetadata(ctx, sh.getMetadata()), req)
+	var md metadata.MD
+	resultSet, err := sh.getClient().ExecuteSql(contextWithOutgoingMetadata(ctx, sh.getMetadata()), req, gax.WithGRPCOptions(grpc.Header(&md)))
+
+	if getGFELatencyMetricsFlag() && md != nil && t.ct != nil {
+		if err := createContextAndCaptureGFELatencyMetrics(ctx, t.ct, md, "update"); err != nil {
+			trace.TracePrintf(ctx, nil, "Error in recording GFE Latency. Try disabling and rerunning. Error: %v", err)
+		}
+	}
 	if err != nil {
 		return 0, ToSpannerError(err)
 	}
@@ -948,13 +1038,20 @@ func (t *ReadWriteTransaction) batchUpdateWithOptions(ctx context.Context, stmts
 		})
 	}
 
+	var md metadata.MD
 	resp, err := sh.getClient().ExecuteBatchDml(contextWithOutgoingMetadata(ctx, sh.getMetadata()), &sppb.ExecuteBatchDmlRequest{
 		Session:        sh.getID(),
 		Transaction:    ts,
 		Statements:     sppbStmts,
 		Seqno:          atomic.AddInt64(&t.sequenceNumber, 1),
 		RequestOptions: createRequestOptions(opts.Priority, opts.RequestTag, t.txOpts.TransactionTag),
-	})
+	}, gax.WithGRPCOptions(grpc.Header(&md)))
+
+	if getGFELatencyMetricsFlag() && md != nil && t.ct != nil {
+		if err := createContextAndCaptureGFELatencyMetrics(ctx, t.ct, md, "batchUpdateWithOptions"); err != nil {
+			trace.TracePrintf(ctx, nil, "Error in recording GFE Latency. Try disabling and rerunning. Error: %v", ToSpannerError(err))
+		}
+	}
 	if err != nil {
 		return nil, ToSpannerError(err)
 	}
@@ -1046,9 +1143,17 @@ type CommitResponse struct {
 	CommitStats *sppb.CommitResponse_CommitStats
 }
 
-// CommitOptions provides options for commiting a transaction in a database.
+// CommitOptions provides options for committing a transaction in a database.
 type CommitOptions struct {
 	ReturnCommitStats bool
+}
+
+// merge combines two CommitOptions that the input parameter will have higher
+// order of precedence.
+func (co CommitOptions) merge(opts CommitOptions) CommitOptions {
+	return CommitOptions{
+		ReturnCommitStats: co.ReturnCommitStats || opts.ReturnCommitStats,
+	}
 }
 
 // commit tries to commit a readwrite transaction to Cloud Spanner. It also
@@ -1070,6 +1175,7 @@ func (t *ReadWriteTransaction) commit(ctx context.Context, options CommitOptions
 		return resp, errSessionClosed(t.sh)
 	}
 
+	var md metadata.MD
 	res, e := client.Commit(contextWithOutgoingMetadata(ctx, t.sh.getMetadata()), &sppb.CommitRequest{
 		Session: sid,
 		Transaction: &sppb.CommitRequest_TransactionId{
@@ -1078,7 +1184,12 @@ func (t *ReadWriteTransaction) commit(ctx context.Context, options CommitOptions
 		RequestOptions:    createRequestOptions(t.txOpts.CommitPriority, "", t.txOpts.TransactionTag),
 		Mutations:         mPb,
 		ReturnCommitStats: options.ReturnCommitStats,
-	})
+	}, gax.WithGRPCOptions(grpc.Header(&md)))
+	if getGFELatencyMetricsFlag() && md != nil && t.ct != nil {
+		if err := createContextAndCaptureGFELatencyMetrics(ctx, t.ct, md, "commit"); err != nil {
+			trace.TracePrintf(ctx, nil, "Error in recording GFE Latency. Try disabling and rerunning. Error: %v", err)
+		}
+	}
 	if e != nil {
 		return resp, toSpannerErrorWithCommitInfo(e, true)
 	}
@@ -1209,7 +1320,9 @@ func NewReadWriteStmtBasedTransactionWithOptions(ctx context.Context, c *Client,
 	t.txReadOnly.sh = sh
 	t.txReadOnly.txReadEnv = t
 	t.txReadOnly.qo = c.qo
-	t.txOpts = options
+	t.txReadOnly.ro = c.ro
+	t.txOpts = c.txo.merge(options)
+	t.ct = c.ct
 
 	if err = t.begin(ctx); err != nil {
 		if sh != nil {
@@ -1266,9 +1379,9 @@ type writeOnlyTransaction struct {
 // applyAtLeastOnce commits a list of mutations to Cloud Spanner at least once,
 // unless one of the following happens:
 //
-//     1) Context times out.
-//     2) An unretryable error (e.g. database not found) occurs.
-//     3) There is a malformed Mutation object.
+//  1. Context times out.
+//  2. An unretryable error (e.g. database not found) occurs.
+//  3. There is a malformed Mutation object.
 func (t *writeOnlyTransaction) applyAtLeastOnce(ctx context.Context, ms ...*Mutation) (time.Time, error) {
 	var (
 		ts time.Time

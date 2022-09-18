@@ -1,4 +1,4 @@
-// Copyright 2021 Google LLC
+// Copyright 2022 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +26,11 @@ import (
 
 func ExampleNewInstanceGroupManagersRESTClient() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewInstanceGroupManagersRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -38,6 +43,11 @@ func ExampleNewInstanceGroupManagersRESTClient() {
 
 func ExampleInstanceGroupManagersClient_AbandonInstances() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewInstanceGroupManagersRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -48,16 +58,24 @@ func ExampleInstanceGroupManagersClient_AbandonInstances() {
 		// TODO: Fill request struct fields.
 		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/compute/v1#AbandonInstancesInstanceGroupManagerRequest.
 	}
-	resp, err := c.AbandonInstances(ctx, req)
+	op, err := c.AbandonInstances(ctx, req)
 	if err != nil {
 		// TODO: Handle error.
 	}
-	// TODO: Use resp.
-	_ = resp
+
+	err = op.Wait(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
 }
 
 func ExampleInstanceGroupManagersClient_AggregatedList() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewInstanceGroupManagersRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -84,6 +102,11 @@ func ExampleInstanceGroupManagersClient_AggregatedList() {
 
 func ExampleInstanceGroupManagersClient_ApplyUpdatesToInstances() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewInstanceGroupManagersRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -94,16 +117,24 @@ func ExampleInstanceGroupManagersClient_ApplyUpdatesToInstances() {
 		// TODO: Fill request struct fields.
 		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/compute/v1#ApplyUpdatesToInstancesInstanceGroupManagerRequest.
 	}
-	resp, err := c.ApplyUpdatesToInstances(ctx, req)
+	op, err := c.ApplyUpdatesToInstances(ctx, req)
 	if err != nil {
 		// TODO: Handle error.
 	}
-	// TODO: Use resp.
-	_ = resp
+
+	err = op.Wait(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
 }
 
 func ExampleInstanceGroupManagersClient_CreateInstances() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewInstanceGroupManagersRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -114,16 +145,24 @@ func ExampleInstanceGroupManagersClient_CreateInstances() {
 		// TODO: Fill request struct fields.
 		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/compute/v1#CreateInstancesInstanceGroupManagerRequest.
 	}
-	resp, err := c.CreateInstances(ctx, req)
+	op, err := c.CreateInstances(ctx, req)
 	if err != nil {
 		// TODO: Handle error.
 	}
-	// TODO: Use resp.
-	_ = resp
+
+	err = op.Wait(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
 }
 
 func ExampleInstanceGroupManagersClient_Delete() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewInstanceGroupManagersRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -134,16 +173,24 @@ func ExampleInstanceGroupManagersClient_Delete() {
 		// TODO: Fill request struct fields.
 		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/compute/v1#DeleteInstanceGroupManagerRequest.
 	}
-	resp, err := c.Delete(ctx, req)
+	op, err := c.Delete(ctx, req)
 	if err != nil {
 		// TODO: Handle error.
 	}
-	// TODO: Use resp.
-	_ = resp
+
+	err = op.Wait(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
 }
 
 func ExampleInstanceGroupManagersClient_DeleteInstances() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewInstanceGroupManagersRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -154,16 +201,24 @@ func ExampleInstanceGroupManagersClient_DeleteInstances() {
 		// TODO: Fill request struct fields.
 		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/compute/v1#DeleteInstancesInstanceGroupManagerRequest.
 	}
-	resp, err := c.DeleteInstances(ctx, req)
+	op, err := c.DeleteInstances(ctx, req)
 	if err != nil {
 		// TODO: Handle error.
 	}
-	// TODO: Use resp.
-	_ = resp
+
+	err = op.Wait(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
 }
 
 func ExampleInstanceGroupManagersClient_DeletePerInstanceConfigs() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewInstanceGroupManagersRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -174,16 +229,24 @@ func ExampleInstanceGroupManagersClient_DeletePerInstanceConfigs() {
 		// TODO: Fill request struct fields.
 		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/compute/v1#DeletePerInstanceConfigsInstanceGroupManagerRequest.
 	}
-	resp, err := c.DeletePerInstanceConfigs(ctx, req)
+	op, err := c.DeletePerInstanceConfigs(ctx, req)
 	if err != nil {
 		// TODO: Handle error.
 	}
-	// TODO: Use resp.
-	_ = resp
+
+	err = op.Wait(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
 }
 
 func ExampleInstanceGroupManagersClient_Get() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewInstanceGroupManagersRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -204,6 +267,11 @@ func ExampleInstanceGroupManagersClient_Get() {
 
 func ExampleInstanceGroupManagersClient_Insert() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewInstanceGroupManagersRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -214,16 +282,24 @@ func ExampleInstanceGroupManagersClient_Insert() {
 		// TODO: Fill request struct fields.
 		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/compute/v1#InsertInstanceGroupManagerRequest.
 	}
-	resp, err := c.Insert(ctx, req)
+	op, err := c.Insert(ctx, req)
 	if err != nil {
 		// TODO: Handle error.
 	}
-	// TODO: Use resp.
-	_ = resp
+
+	err = op.Wait(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
 }
 
 func ExampleInstanceGroupManagersClient_List() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewInstanceGroupManagersRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -250,6 +326,11 @@ func ExampleInstanceGroupManagersClient_List() {
 
 func ExampleInstanceGroupManagersClient_ListErrors() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewInstanceGroupManagersRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -276,6 +357,11 @@ func ExampleInstanceGroupManagersClient_ListErrors() {
 
 func ExampleInstanceGroupManagersClient_ListManagedInstances() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewInstanceGroupManagersRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -302,6 +388,11 @@ func ExampleInstanceGroupManagersClient_ListManagedInstances() {
 
 func ExampleInstanceGroupManagersClient_ListPerInstanceConfigs() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewInstanceGroupManagersRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -328,6 +419,11 @@ func ExampleInstanceGroupManagersClient_ListPerInstanceConfigs() {
 
 func ExampleInstanceGroupManagersClient_Patch() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewInstanceGroupManagersRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -338,16 +434,24 @@ func ExampleInstanceGroupManagersClient_Patch() {
 		// TODO: Fill request struct fields.
 		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/compute/v1#PatchInstanceGroupManagerRequest.
 	}
-	resp, err := c.Patch(ctx, req)
+	op, err := c.Patch(ctx, req)
 	if err != nil {
 		// TODO: Handle error.
 	}
-	// TODO: Use resp.
-	_ = resp
+
+	err = op.Wait(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
 }
 
 func ExampleInstanceGroupManagersClient_PatchPerInstanceConfigs() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewInstanceGroupManagersRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -358,16 +462,24 @@ func ExampleInstanceGroupManagersClient_PatchPerInstanceConfigs() {
 		// TODO: Fill request struct fields.
 		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/compute/v1#PatchPerInstanceConfigsInstanceGroupManagerRequest.
 	}
-	resp, err := c.PatchPerInstanceConfigs(ctx, req)
+	op, err := c.PatchPerInstanceConfigs(ctx, req)
 	if err != nil {
 		// TODO: Handle error.
 	}
-	// TODO: Use resp.
-	_ = resp
+
+	err = op.Wait(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
 }
 
 func ExampleInstanceGroupManagersClient_RecreateInstances() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewInstanceGroupManagersRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -378,16 +490,24 @@ func ExampleInstanceGroupManagersClient_RecreateInstances() {
 		// TODO: Fill request struct fields.
 		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/compute/v1#RecreateInstancesInstanceGroupManagerRequest.
 	}
-	resp, err := c.RecreateInstances(ctx, req)
+	op, err := c.RecreateInstances(ctx, req)
 	if err != nil {
 		// TODO: Handle error.
 	}
-	// TODO: Use resp.
-	_ = resp
+
+	err = op.Wait(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
 }
 
 func ExampleInstanceGroupManagersClient_Resize() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewInstanceGroupManagersRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -398,16 +518,24 @@ func ExampleInstanceGroupManagersClient_Resize() {
 		// TODO: Fill request struct fields.
 		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/compute/v1#ResizeInstanceGroupManagerRequest.
 	}
-	resp, err := c.Resize(ctx, req)
+	op, err := c.Resize(ctx, req)
 	if err != nil {
 		// TODO: Handle error.
 	}
-	// TODO: Use resp.
-	_ = resp
+
+	err = op.Wait(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
 }
 
 func ExampleInstanceGroupManagersClient_SetInstanceTemplate() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewInstanceGroupManagersRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -418,16 +546,24 @@ func ExampleInstanceGroupManagersClient_SetInstanceTemplate() {
 		// TODO: Fill request struct fields.
 		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/compute/v1#SetInstanceTemplateInstanceGroupManagerRequest.
 	}
-	resp, err := c.SetInstanceTemplate(ctx, req)
+	op, err := c.SetInstanceTemplate(ctx, req)
 	if err != nil {
 		// TODO: Handle error.
 	}
-	// TODO: Use resp.
-	_ = resp
+
+	err = op.Wait(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
 }
 
 func ExampleInstanceGroupManagersClient_SetTargetPools() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewInstanceGroupManagersRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -438,16 +574,24 @@ func ExampleInstanceGroupManagersClient_SetTargetPools() {
 		// TODO: Fill request struct fields.
 		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/compute/v1#SetTargetPoolsInstanceGroupManagerRequest.
 	}
-	resp, err := c.SetTargetPools(ctx, req)
+	op, err := c.SetTargetPools(ctx, req)
 	if err != nil {
 		// TODO: Handle error.
 	}
-	// TODO: Use resp.
-	_ = resp
+
+	err = op.Wait(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
 }
 
 func ExampleInstanceGroupManagersClient_UpdatePerInstanceConfigs() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewInstanceGroupManagersRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -458,10 +602,13 @@ func ExampleInstanceGroupManagersClient_UpdatePerInstanceConfigs() {
 		// TODO: Fill request struct fields.
 		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/compute/v1#UpdatePerInstanceConfigsInstanceGroupManagerRequest.
 	}
-	resp, err := c.UpdatePerInstanceConfigs(ctx, req)
+	op, err := c.UpdatePerInstanceConfigs(ctx, req)
 	if err != nil {
 		// TODO: Handle error.
 	}
-	// TODO: Use resp.
-	_ = resp
+
+	err = op.Wait(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
 }

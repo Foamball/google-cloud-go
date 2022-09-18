@@ -1,4 +1,4 @@
-// Copyright 2021 Google LLC
+// Copyright 2022 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ func defaultPredictionCallOptions() *PredictionCallOptions {
 	}
 }
 
-// internalPredictionClient is an interface that defines the methods availaible from Cloud AutoML API.
+// internalPredictionClient is an interface that defines the methods available from Cloud AutoML API.
 type internalPredictionClient interface {
 	Close() error
 	setGoogleClientInfo(...string)
@@ -78,7 +78,7 @@ type internalPredictionClient interface {
 // AutoML Prediction API.
 //
 // On any input that is documented to expect a string parameter in
-// snake_case or kebab-case, either of those cases is accepted.
+// snake_case or dash-case, either of those cases is accepted.
 type PredictionClient struct {
 	// The internal transport-dependent client.
 	internalClient internalPredictionClient
@@ -109,7 +109,8 @@ func (c *PredictionClient) setGoogleClientInfo(keyval ...string) {
 
 // Connection returns a connection to the API service.
 //
-// Deprecated.
+// Deprecated: Connections are now pooled so this method does not always
+// return the same resource.
 func (c *PredictionClient) Connection() *grpc.ClientConn {
 	return c.internalClient.Connection()
 }
@@ -120,36 +121,36 @@ func (c *PredictionClient) Connection() *grpc.ClientConn {
 //
 // AutoML Vision Classification
 //
-//   An image in .JPEG, .GIF or .PNG format, image_bytes up to 30MB.
+//	An image in .JPEG, .GIF or .PNG format, image_bytes up to 30MB.
 //
 // AutoML Vision Object Detection
 //
-//   An image in .JPEG, .GIF or .PNG format, image_bytes up to 30MB.
+//	An image in .JPEG, .GIF or .PNG format, image_bytes up to 30MB.
 //
 // AutoML Natural Language Classification
 //
-//   A TextSnippet up to 60,000 characters, UTF-8 encoded or a document in
-//   .PDF, .TIF or .TIFF format with size upto 2MB.
+//	A TextSnippet up to 60,000 characters, UTF-8 encoded or a document in
+//	.PDF, .TIF or .TIFF format with size upto 2MB.
 //
 // AutoML Natural Language Entity Extraction
 //
-//   A TextSnippet up to 10,000 characters, UTF-8 NFC encoded or a document
-//   in .PDF, .TIF or .TIFF format with size upto 20MB.
+//	A TextSnippet up to 10,000 characters, UTF-8 NFC encoded or a document
+//	in .PDF, .TIF or .TIFF format with size upto 20MB.
 //
 // AutoML Natural Language Sentiment Analysis
 //
-//   A TextSnippet up to 60,000 characters, UTF-8 encoded or a document in
-//   .PDF, .TIF or .TIFF format with size upto 2MB.
+//	A TextSnippet up to 60,000 characters, UTF-8 encoded or a document in
+//	.PDF, .TIF or .TIFF format with size upto 2MB.
 //
 // AutoML Translation
 //
-//   A TextSnippet up to 25,000 characters, UTF-8 encoded.
+//	A TextSnippet up to 25,000 characters, UTF-8 encoded.
 //
 // AutoML Tables
 //
-//   A row with column values matching
-//   the columns of the model, up to 5MB. Not available for FORECASTING
-//   prediction_type.
+//	A row with column values matching
+//	the columns of the model, up to 5MB. Not available for FORECASTING
+//	prediction_type.
 func (c *PredictionClient) Predict(ctx context.Context, req *automlpb.PredictRequest, opts ...gax.CallOption) (*automlpb.PredictResponse, error) {
 	return c.internalClient.Predict(ctx, req, opts...)
 }
@@ -162,19 +163,19 @@ func (c *PredictionClient) Predict(ctx context.Context, req *automlpb.PredictReq
 // the response field.
 // Available for following ML scenarios:
 //
-//   AutoML Vision Classification
+//	AutoML Vision Classification
 //
-//   AutoML Vision Object Detection
+//	AutoML Vision Object Detection
 //
-//   AutoML Video Intelligence Classification
+//	AutoML Video Intelligence Classification
 //
-//   AutoML Video Intelligence Object Tracking * AutoML Natural Language Classification
+//	AutoML Video Intelligence Object Tracking * AutoML Natural Language Classification
 //
-//   AutoML Natural Language Entity Extraction
+//	AutoML Natural Language Entity Extraction
 //
-//   AutoML Natural Language Sentiment Analysis
+//	AutoML Natural Language Sentiment Analysis
 //
-//   AutoML Tables
+//	AutoML Tables
 func (c *PredictionClient) BatchPredict(ctx context.Context, req *automlpb.BatchPredictRequest, opts ...gax.CallOption) (*BatchPredictOperation, error) {
 	return c.internalClient.BatchPredict(ctx, req, opts...)
 }
@@ -216,7 +217,7 @@ type predictionGRPCClient struct {
 // AutoML Prediction API.
 //
 // On any input that is documented to expect a string parameter in
-// snake_case or kebab-case, either of those cases is accepted.
+// snake_case or dash-case, either of those cases is accepted.
 func NewPredictionClient(ctx context.Context, opts ...option.ClientOption) (*PredictionClient, error) {
 	clientOpts := defaultPredictionGRPCClientOptions()
 	if newPredictionClientHook != nil {
@@ -264,7 +265,8 @@ func NewPredictionClient(ctx context.Context, opts ...option.ClientOption) (*Pre
 
 // Connection returns a connection to the API service.
 //
-// Deprecated.
+// Deprecated: Connections are now pooled so this method does not always
+// return the same resource.
 func (c *predictionGRPCClient) Connection() *grpc.ClientConn {
 	return c.connPool.Conn()
 }
@@ -274,7 +276,7 @@ func (c *predictionGRPCClient) Connection() *grpc.ClientConn {
 // use by Google-written clients.
 func (c *predictionGRPCClient) setGoogleClientInfo(keyval ...string) {
 	kv := append([]string{"gl-go", versionGo()}, keyval...)
-	kv = append(kv, "gapic", versionClient, "gax", gax.Version, "grpc", grpc.Version)
+	kv = append(kv, "gapic", getVersionClient(), "gax", gax.Version, "grpc", grpc.Version)
 	c.xGoogMetadata = metadata.Pairs("x-goog-api-client", gax.XGoogHeader(kv...))
 }
 
@@ -291,6 +293,7 @@ func (c *predictionGRPCClient) Predict(ctx context.Context, req *automlpb.Predic
 		ctx = cctx
 	}
 	md := metadata.Pairs("x-goog-request-params", fmt.Sprintf("%s=%v", "name", url.QueryEscape(req.GetName())))
+
 	ctx = insertMetadata(ctx, c.xGoogMetadata, md)
 	opts = append((*c.CallOptions).Predict[0:len((*c.CallOptions).Predict):len((*c.CallOptions).Predict)], opts...)
 	var resp *automlpb.PredictResponse
@@ -312,6 +315,7 @@ func (c *predictionGRPCClient) BatchPredict(ctx context.Context, req *automlpb.B
 		ctx = cctx
 	}
 	md := metadata.Pairs("x-goog-request-params", fmt.Sprintf("%s=%v", "name", url.QueryEscape(req.GetName())))
+
 	ctx = insertMetadata(ctx, c.xGoogMetadata, md)
 	opts = append((*c.CallOptions).BatchPredict[0:len((*c.CallOptions).BatchPredict):len((*c.CallOptions).BatchPredict)], opts...)
 	var resp *longrunningpb.Operation

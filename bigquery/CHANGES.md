@@ -1,5 +1,268 @@
 # Changes
 
+
+
+## [1.41.0](https://github.com/googleapis/google-cloud-go/compare/bigquery/v1.40.0...bigquery/v1.41.0) (2022-09-14)
+
+
+### Features
+
+* **bigquery/storage:** add location to WriteStream and add WriteStreamView support ([6a0080a](https://github.com/googleapis/google-cloud-go/commit/6a0080ad69398c572d856886293e19c79cf0fc0e))
+
+
+### Bug Fixes
+
+* **bigquery/storage/managedwriter:** Fix incorrect error retention ([#6659](https://github.com/googleapis/google-cloud-go/issues/6659)) ([dc02bca](https://github.com/googleapis/google-cloud-go/commit/dc02bca4ac14acb4f536f078a7d8f209626340bb))
+* **bigquery:** Parse timestamp query parameter with RFC3339 ([#6653](https://github.com/googleapis/google-cloud-go/issues/6653)) ([aabd2d6](https://github.com/googleapis/google-cloud-go/commit/aabd2d61c81ed598755656b4e7c3fd84dcd3b2d4))
+
+## [1.40.0](https://github.com/googleapis/google-cloud-go/compare/bigquery/v1.39.0...bigquery/v1.40.0) (2022-09-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* **bigquery/dataexchange:** update BigQuery Analytics Hub API v1beta1 client BREAKING CHANGE: refresh current dataexchange/v1beta1/* directory to include recent change in protos. Removed common directory and use local enum Category fix!: refactor references to Category message docs: improve proto documentation.
+
+### Features
+
+* **bigquery/dataexchange:** update BigQuery Analytics Hub API v1beta1 client BREAKING CHANGE: refresh current dataexchange/v1beta1/* directory to include recent change in protos. Removed common directory and use local enum Category fix!: refactor references to Category message docs: improve proto documentation. ([e45ad9a](https://github.com/googleapis/google-cloud-go/commit/e45ad9af568c59151decc0dacedf137653b576dd))
+* **bigquery/storage/managedwriter:** Augment reconnection logic ([#6609](https://github.com/googleapis/google-cloud-go/issues/6609)) ([6b0ac0c](https://github.com/googleapis/google-cloud-go/commit/6b0ac0c400d2d5b26689176c71cc6db1db9b283f))
+* **bigquery:** Add trace instrumentation support for individual rpcs ([#6493](https://github.com/googleapis/google-cloud-go/issues/6493)) ([eedc632](https://github.com/googleapis/google-cloud-go/commit/eedc6327b845850d9d6109014a5d531dfbfa7d04))
+* **bigquery:** Improve error when reading null values ([#6566](https://github.com/googleapis/google-cloud-go/issues/6566)) ([e9a94c2](https://github.com/googleapis/google-cloud-go/commit/e9a94c2e52ca3d07bc15030cf411f7e1c5235d39)), refs [#2612](https://github.com/googleapis/google-cloud-go/issues/2612)
+
+
+### Documentation
+
+* **bigquery:** Add numeric and bignumeric to RowIterator docs ([#6560](https://github.com/googleapis/google-cloud-go/issues/6560)) ([bea4028](https://github.com/googleapis/google-cloud-go/commit/bea4028a5fde6e790f70b0a98c33b81b3ad4023e))
+
+
+### Miscellaneous Chores
+
+* **bigquery:** Release 1.40.0 ([#6635](https://github.com/googleapis/google-cloud-go/issues/6635)) ([628deae](https://github.com/googleapis/google-cloud-go/commit/628deae4e0e0f4f1ae7e99433eefdc8f7cc41b41))
+
+## [1.39.0](https://github.com/googleapis/google-cloud-go/compare/bigquery/v1.38.0...bigquery/v1.39.0) (2022-08-23)
+
+
+### Features
+
+* **bigquery/storage:** allow users to set Apache Avro output format options through avro_serialization_options param in TableReadOptions message Through AvroSerializationOptions, users can set enable_display_name_attribute, which populates displayName for every avro field with the original column name Improved documentation for selected_fields, added example for clarity. ([41ab4ec](https://github.com/googleapis/google-cloud-go/commit/41ab4ec00552931b12f61a9fcb27b36a7c0b5d77))
+* **bigquery:** add PreserveAsciiControlCharacters support for CSV ([#6448](https://github.com/googleapis/google-cloud-go/issues/6448)) ([b7bac2f](https://github.com/googleapis/google-cloud-go/commit/b7bac2fbf63c2a681da6fdbf5af217bf8de1455f))
+* **bigquery:** add preview support for default values ([#6464](https://github.com/googleapis/google-cloud-go/issues/6464)) ([edc3be5](https://github.com/googleapis/google-cloud-go/commit/edc3be586f9e8b65c34318773f5c55e1a4ccb07b))
+
+## [1.38.0](https://github.com/googleapis/google-cloud-go/compare/bigquery/v1.37.0...bigquery/v1.38.0) (2022-08-12)
+
+
+### Features
+
+* **bigquery/migration:** Add MySQL dialect to bigquerymigration v2 client library ([370e23e](https://github.com/googleapis/google-cloud-go/commit/370e23eaa342a7055a8d8b6f8fe9420f83afe43e))
+* **bigquery/storage/managedwriter:** improve error communication ([#6360](https://github.com/googleapis/google-cloud-go/issues/6360)) ([b30d89d](https://github.com/googleapis/google-cloud-go/commit/b30d89d5bd4a8ce553a328abb4b78f8fc51b43f0))
+
+
+### Bug Fixes
+
+* **bigquery/storage/managedwriter:** propagate calloptions to append ([#6488](https://github.com/googleapis/google-cloud-go/issues/6488)) ([c65f9da](https://github.com/googleapis/google-cloud-go/commit/c65f9dab8118295e49a7b863f59cb64ace4c2d5b))
+
+## [1.37.0](https://github.com/googleapis/google-cloud-go/compare/bigquery/v1.36.0...bigquery/v1.37.0) (2022-08-04)
+
+
+### Features
+
+* **bigquery/connection:** Add service_account_id output field to CloudSQL properties ([1d6fbcc](https://github.com/googleapis/google-cloud-go/commit/1d6fbcc6406e2063201ef5a98de560bf32f7fb73))
+* **bigquery/storage/managedwriter:** refactor AppendResponse ([#6402](https://github.com/googleapis/google-cloud-go/issues/6402)) ([c07bca2](https://github.com/googleapis/google-cloud-go/commit/c07bca2d65ec9903ba0c592da11440cebe8b7d9e))
+* **bigquery:** support JSON as a data type ([#5986](https://github.com/googleapis/google-cloud-go/issues/5986)) ([835fe4f](https://github.com/googleapis/google-cloud-go/commit/835fe4fe59f4a3c64c5762a530228d5369618897))
+
+
+### Bug Fixes
+
+* **bigquery:** include user_email field when requesting job information ([#6256](https://github.com/googleapis/google-cloud-go/issues/6256)) ([da42b4e](https://github.com/googleapis/google-cloud-go/commit/da42b4e05faa067b5afa0a9a479d1db72296948e))
+
+
+### Documentation
+
+* **bigquery/storage:** clarify size limitations for AppendRowsRequest chore: add preferred_min_stream_count to CreateReadSessionRequest chore: add write_stream to AppendRowsResponse ([1d6fbcc](https://github.com/googleapis/google-cloud-go/commit/1d6fbcc6406e2063201ef5a98de560bf32f7fb73))
+
+## [1.36.0](https://github.com/googleapis/google-cloud-go/compare/bigquery/v1.35.0...bigquery/v1.36.0) (2022-07-18)
+
+
+### Features
+
+* **bigquery/migration:** Add Presto dialect to bigquerymigration v2 client library ([89a049a](https://github.com/googleapis/google-cloud-go/commit/89a049a98e1d18b922cc6ad08622161448544902))
+* **bigquery/storage/managedwriter/adapt:** support packed field option ([#6312](https://github.com/googleapis/google-cloud-go/issues/6312)) ([fc3417b](https://github.com/googleapis/google-cloud-go/commit/fc3417be70cd01a0044ec934c5c6426ea833d90c))
+
+
+### Bug Fixes
+
+* **bigquery/storage/managedwriter:** improve network reconnection ([#6338](https://github.com/googleapis/google-cloud-go/issues/6338)) ([085a038](https://github.com/googleapis/google-cloud-go/commit/085a03865d20122c74e107ea43883ae33bdf25bc))
+
+## [1.35.0](https://github.com/googleapis/google-cloud-go/compare/bigquery/v1.34.1...bigquery/v1.35.0) (2022-07-07)
+
+
+### Features
+
+* **bigquery:** start generating REST client for beta clients ([25b7775](https://github.com/googleapis/google-cloud-go/commit/25b77757c1e6f372e03bf99ab7461264bba48d26))
+
+
+### Bug Fixes
+
+* **bigquery/storage/managedstorage:** improve internal locking ([#6304](https://github.com/googleapis/google-cloud-go/issues/6304)) ([a2925ce](https://github.com/googleapis/google-cloud-go/commit/a2925ce2f96c538d3994e2d0cef49fbcdd727217))
+* **bigquery/storage/managedwriter/adapt:** schema->protodescriptor ([#6267](https://github.com/googleapis/google-cloud-go/issues/6267)) ([a017230](https://github.com/googleapis/google-cloud-go/commit/a01723055cb7604047c4fddd7d00213d800e4122)), refs [#6258](https://github.com/googleapis/google-cloud-go/issues/6258)
+* **bigquery/storage:** Modify client lib retry policy for CreateWriteStream with longer backoff, more error code and longer overall time ([199b725](https://github.com/googleapis/google-cloud-go/commit/199b7250f474b1a6f53dcf0aac0c2966f4987b68))
+
+## [1.34.1](https://github.com/googleapis/google-cloud-go/compare/bigquery/v1.34.0...bigquery/v1.34.1) (2022-06-23)
+
+
+### Bug Fixes
+
+* **bigquery:** release 1.34.1 ([#6251](https://github.com/googleapis/google-cloud-go/issues/6251)) ([c742b0e](https://github.com/googleapis/google-cloud-go/commit/c742b0ee644246162acaa964fc2a65eef392846f))
+
+## [1.34.0](https://github.com/googleapis/google-cloud-go/compare/bigquery/v1.33.0...bigquery/v1.34.0) (2022-06-23)
+
+
+### Features
+
+* **bigquery/storage:** add fields to eventually contain row level errors ([5fe3b1d](https://github.com/googleapis/google-cloud-go/commit/5fe3b1d946db991aebdfd279f6f3b06b8baec205))
+
+
+### Bug Fixes
+
+* **bigquery/storage/managedwriter:** address locking and schema updates ([#6243](https://github.com/googleapis/google-cloud-go/issues/6243)) ([fe264a5](https://github.com/googleapis/google-cloud-go/commit/fe264a5ccfe5b13f6b7215d66a04282f5e38457f))
+
+## [1.33.0](https://github.com/googleapis/google-cloud-go/compare/bigquery/v1.32.0...bigquery/v1.33.0) (2022-06-16)
+
+
+### Features
+
+* **bigquery/migration:** Add SQL Server dialect to bigquerymigration v2 client library ([90489b1](https://github.com/googleapis/google-cloud-go/commit/90489b10fd7da4cfafe326e00d1f4d81570147f7))
+* **bigquery/storage/managedwriter/adapt:** support proto3 presence ([#6021](https://github.com/googleapis/google-cloud-go/issues/6021)) ([2984600](https://github.com/googleapis/google-cloud-go/commit/29846003d4bebb1a07ac11cac462ae65cb0bc59c))
+* **bigquery/storage/managedwriter:** improve proto3 normalization ([#6082](https://github.com/googleapis/google-cloud-go/issues/6082)) ([6a742ff](https://github.com/googleapis/google-cloud-go/commit/6a742ffb16da991a0bf2df37218dc40af5ee0011))
+* **bigquery:** add support for dataset tags ([#6114](https://github.com/googleapis/google-cloud-go/issues/6114)) ([1f35044](https://github.com/googleapis/google-cloud-go/commit/1f35044894c7395326d7a5b787a2406d5cd92cb1))
+* **bigquery:** support partial projection of table metadata ([#6186](https://github.com/googleapis/google-cloud-go/issues/6186)) ([507a2be](https://github.com/googleapis/google-cloud-go/commit/507a2be8e4fda152d517dcb972be6353a6da2914))
+
+
+### Bug Fixes
+
+* **bigquery/dataexchange:** Include common protos in google-cloud-bigquery-data_exchange-v1beta1 ([6ef576e](https://github.com/googleapis/google-cloud-go/commit/6ef576e2d821d079e7b940cd5d49fe3ca64a7ba2))
+
+## [1.32.0](https://github.com/googleapis/google-cloud-go/compare/bigquery/v1.31.0...bigquery/v1.32.0) (2022-05-06)
+
+
+### Features
+
+* **bigquery:** add interval support ([#5907](https://github.com/googleapis/google-cloud-go/issues/5907)) ([9e979c9](https://github.com/googleapis/google-cloud-go/commit/9e979c9718df1de440d440e4c3e20bb3cb8c5aa1))
+* **bigquery:** expose connections and schema autodetect modifier ([#5739](https://github.com/googleapis/google-cloud-go/issues/5739)) ([c72e34f](https://github.com/googleapis/google-cloud-go/commit/c72e34fd79990eedaa56ed9e5121ab1a7fc4e2da))
+
+## [1.31.0](https://github.com/googleapis/google-cloud-go/compare/bigquery/v1.30.2...bigquery/v1.31.0) (2022-04-12)
+
+
+### Features
+
+* **bigquery/storage:** Deprecate format specific `row_count` field in Read API ([57896d1](https://github.com/googleapis/google-cloud-go/commit/57896d1491c04fa53d3f3e2344ef10c3d91c4b65))
+* **bigquery:** enhance SchemaFromJSON ([#5877](https://github.com/googleapis/google-cloud-go/issues/5877)) ([16289f0](https://github.com/googleapis/google-cloud-go/commit/16289f086ae15ea18c70d387b542796e099d4a09))
+* **bigquery:** support table cloning ([#5672](https://github.com/googleapis/google-cloud-go/issues/5672)) ([74c120a](https://github.com/googleapis/google-cloud-go/commit/74c120a81d2181d9809e5d3c0462bd859297d073))
+
+### [1.30.2](https://github.com/googleapis/google-cloud-go/compare/bigquery/v1.30.1...bigquery/v1.30.2) (2022-03-30)
+
+
+### Bug Fixes
+
+* **bigquery/storage/managedwriter/adapt:** fix enum append ([#5819](https://github.com/googleapis/google-cloud-go/issues/5819)) ([9eeaf0f](https://github.com/googleapis/google-cloud-go/commit/9eeaf0fe9de6e9583a6994e49f95ad524bc9e68e))
+
+### [1.30.1](https://github.com/googleapis/google-cloud-go/compare/bigquery/v1.30.0...bigquery/v1.30.1) (2022-03-30)
+
+
+### Bug Fixes
+
+* **bigquery/storage/managedwriter:** correct enum processing in NormalizeDescriptor ([#5811](https://github.com/googleapis/google-cloud-go/issues/5811)) ([52cf48e](https://github.com/googleapis/google-cloud-go/commit/52cf48edff487352c2755de86e2ea069b1b29617))
+* **bigquery:** improve retry for table create ([#5807](https://github.com/googleapis/google-cloud-go/issues/5807)) ([f27d1dc](https://github.com/googleapis/google-cloud-go/commit/f27d1dc43acbd437f517c05d65c992644f3f3111))
+
+## [1.30.0](https://github.com/googleapis/google-cloud-go/compare/bigquery/v1.29.0...bigquery/v1.30.0) (2022-03-16)
+
+
+### Features
+
+* **bigquery:** support authorized datasets ([#5666](https://github.com/googleapis/google-cloud-go/issues/5666)) ([859048e](https://github.com/googleapis/google-cloud-go/commit/859048e491dd840c9aea218fa670ed2fb46d78e2))
+
+
+### Bug Fixes
+
+* **bigquery:** Query.Read fails with dry-run queries ([#5753](https://github.com/googleapis/google-cloud-go/issues/5753)) ([e279584](https://github.com/googleapis/google-cloud-go/commit/e279584727e2a496b3d566ed6f6683715a594a6d))
+
+## [1.29.0](https://github.com/googleapis/google-cloud-go/compare/bigquery/v1.28.0...bigquery/v1.29.0) (2022-03-02)
+
+
+### Features
+
+* **bigquery/storage/managedwriter/adapt:** handle oneof normalization ([#5670](https://github.com/googleapis/google-cloud-go/issues/5670)) ([c7f54d8](https://github.com/googleapis/google-cloud-go/commit/c7f54d81baa34ce0f31bbe0af1cb03c2598e5e74))
+* **bigquery/storage/managedwriter:** minor ease-of-use improvements ([#5660](https://github.com/googleapis/google-cloud-go/issues/5660)) ([d253c24](https://github.com/googleapis/google-cloud-go/commit/d253c24fd61f181971056ba00749efd69b3ae691))
+* **bigquery/storage:** add trace_id for Read API ([080adb0](https://github.com/googleapis/google-cloud-go/commit/080adb0b855289ddbd86ac9e5e6eb236673f6884))
+* **bigquery:** add job timeout support ([#5707](https://github.com/googleapis/google-cloud-go/issues/5707)) ([868363c](https://github.com/googleapis/google-cloud-go/commit/868363cbc68c655d4c1f8959280cf1acba5073a7))
+* **bigquery:** set versionClient to module version ([55f0d92](https://github.com/googleapis/google-cloud-go/commit/55f0d92bf112f14b024b4ab0076c9875a17423c9))
+
+
+### Bug Fixes
+
+* **bigquery/storage:** remove bigquery.readonly auth scope ([5af548b](https://github.com/googleapis/google-cloud-go/commit/5af548bee4ffde279727b2e1ad9b072925106a74))
+
+## [1.28.0](https://github.com/googleapis/google-cloud-go/compare/bigquery/v1.27.0...bigquery/v1.28.0) (2022-02-14)
+
+
+### Features
+
+* **bigquery/datatransfer:** add owner email to TransferConfig message feat: allow customer to enroll a datasource programmatically docs: improvements to various message and field descriptions ([f560b1e](https://github.com/googleapis/google-cloud-go/commit/f560b1ed0263956ef84fbf2fbf34bdc66dbc0a88))
+* **bigquery:** add better version metadata to calls ([d1ad921](https://github.com/googleapis/google-cloud-go/commit/d1ad921d0322e7ce728ca9d255a3cf0437d26add))
+
+
+### Bug Fixes
+
+* **bigquery/storage/managedwriter:** address possible panic due to flow ([#5436](https://github.com/googleapis/google-cloud-go/issues/5436)) ([50c6e38](https://github.com/googleapis/google-cloud-go/commit/50c6e38c2798b3d4f2a9560239753ecd04502273))
+* **bigquery/storage/managedwriter:** append improvements ([#5465](https://github.com/googleapis/google-cloud-go/issues/5465)) ([aa167bd](https://github.com/googleapis/google-cloud-go/commit/aa167bd5e57facb0f0d6834ab65805956e4ef08c))
+
+## [1.27.0](https://www.github.com/googleapis/google-cloud-go/compare/bigquery/v1.26.0...bigquery/v1.27.0) (2022-01-24)
+
+
+### Features
+
+* **bigquery:** augment retry predicate ([#5387](https://www.github.com/googleapis/google-cloud-go/issues/5387)) ([f9608d4](https://www.github.com/googleapis/google-cloud-go/commit/f9608d4622c56362b2ed0a5845b8fe27f81995aa))
+* **bigquery:** support null marker for csv in external data config ([#5287](https://www.github.com/googleapis/google-cloud-go/issues/5287)) ([132904a](https://www.github.com/googleapis/google-cloud-go/commit/132904a061809ba7117c51e8a8000f1adac34e48))
+
+## [1.26.0](https://www.github.com/googleapis/google-cloud-go/compare/bigquery/v1.25.0...bigquery/v1.26.0) (2022-01-04)
+
+
+### Features
+
+* **bigquery/reservation:** increase the logical timeout (retry deadline) to 5 minutes ([5444809](https://www.github.com/googleapis/google-cloud-go/commit/5444809e0b7cf9f5416645ea2df6fec96f8b9023))
+* **bigquery/storage/managedwriter:** support schema change notification ([#5253](https://www.github.com/googleapis/google-cloud-go/issues/5253)) ([70e40db](https://www.github.com/googleapis/google-cloud-go/commit/70e40db88bc016f228a425da1e278fc76dbf2e36))
+* **bigquery/storage:** add write_mode support for BigQuery Storage Write API v1 ([615b42b](https://www.github.com/googleapis/google-cloud-go/commit/615b42bbb549b6fd3e8b1ba751bc109f79a5575b))
+
+## [1.25.0](https://www.github.com/googleapis/google-cloud-go/compare/bigquery/v1.24.0...bigquery/v1.25.0) (2021-12-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* **bigquery/storage/managedwriter:** changes function signatures to add variadic call options
+
+### Features
+
+* **bigquery/storage/managedwriter:** extend managedstream to support call options ([#5078](https://www.github.com/googleapis/google-cloud-go/issues/5078)) ([fbc2717](https://www.github.com/googleapis/google-cloud-go/commit/fbc2717ec84b1c5557873efaa732c047da66c1e6))
+* **bigquery/storage/managedwriter:** improve method parity in managedwriter ([#5007](https://www.github.com/googleapis/google-cloud-go/issues/5007)) ([a2af4de](https://www.github.com/googleapis/google-cloud-go/commit/a2af4de215a42848368ec3081263d34782032caa))
+* **bigquery/storage/managedwriter:** support variadic appends ([#5102](https://www.github.com/googleapis/google-cloud-go/issues/5102)) ([014b314](https://www.github.com/googleapis/google-cloud-go/commit/014b314b2db70147a26120a1d54a6bc7142d5665))
+* **bigquery:** add BI Engine information to query statistics ([#5081](https://www.github.com/googleapis/google-cloud-go/issues/5081)) ([b78c89b](https://www.github.com/googleapis/google-cloud-go/commit/b78c89b18a81ce155441554cb5455600168eb8fd))
+* **bigquery:** add support for AvroOptions in external data config ([#4945](https://www.github.com/googleapis/google-cloud-go/issues/4945)) ([8844e40](https://www.github.com/googleapis/google-cloud-go/commit/8844e40b7c2a7347e174587ea2cf438a6da9e16f))
+* **bigquery:** allow construction of jobs from other projects ([#5048](https://www.github.com/googleapis/google-cloud-go/issues/5048)) ([6d07eca](https://www.github.com/googleapis/google-cloud-go/commit/6d07eca680362807f6dd870ba9df8c26256601ab))
+* **bigquery:** expose identifiers using a variety of formats ([#5017](https://www.github.com/googleapis/google-cloud-go/issues/5017)) ([c9cd984](https://www.github.com/googleapis/google-cloud-go/commit/c9cd9846b6707d236648d33d44434e64eced9cdd))
+
+
+### Bug Fixes
+
+* **bigquery/migration:** correct python namespace for migration API Committer: [@shollyman](https://www.github.com/shollyman) ([8c5c6cf](https://www.github.com/googleapis/google-cloud-go/commit/8c5c6cf9df046b67998a8608d05595bd9e34feb0))
+* **bigquery/storage/managedwriter:** correctly copy request ([#5122](https://www.github.com/googleapis/google-cloud-go/issues/5122)) ([cd43a5c](https://www.github.com/googleapis/google-cloud-go/commit/cd43a5cde5e4e388266f3773f206ead90d666261))
+* **bigquery:** address one other callsite for the job construction feature ([#5059](https://www.github.com/googleapis/google-cloud-go/issues/5059)) ([98779eb](https://www.github.com/googleapis/google-cloud-go/commit/98779eba0f1f95b195aa6194210208767c169f5e))
+
+
+### Miscellaneous Chores
+
+* **bigquery:** release 1.25.0 ([#5128](https://www.github.com/googleapis/google-cloud-go/issues/5128)) ([f58a9f7](https://www.github.com/googleapis/google-cloud-go/commit/f58a9f7b88e2ce6101cb4bd3c85c267a688a1a1d))
+* **bigquery:** release 1.25.0 ([#5177](https://www.github.com/googleapis/google-cloud-go/issues/5177)) ([359f5b1](https://www.github.com/googleapis/google-cloud-go/commit/359f5b1ca118ff6f92603da083eb943b672ed779))
+
 ## [1.24.0](https://www.github.com/googleapis/google-cloud-go/compare/bigquery/v1.23.0...bigquery/v1.24.0) (2021-09-27)
 
 

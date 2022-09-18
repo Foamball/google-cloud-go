@@ -1,4 +1,4 @@
-// Copyright 2021 Google LLC
+// Copyright 2022 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,7 +26,29 @@ import (
 
 func ExampleNewClient() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := domains.NewClient(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
+	defer c.Close()
+
+	// TODO: Use client.
+	_ = c
+}
+
+func ExampleNewRESTClient() {
+	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
+	c, err := domains.NewRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
 	}
@@ -38,6 +60,11 @@ func ExampleNewClient() {
 
 func ExampleClient_SearchDomains() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := domains.NewClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -58,6 +85,11 @@ func ExampleClient_SearchDomains() {
 
 func ExampleClient_RetrieveRegisterParameters() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := domains.NewClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -78,6 +110,11 @@ func ExampleClient_RetrieveRegisterParameters() {
 
 func ExampleClient_RegisterDomain() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := domains.NewClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -103,6 +140,11 @@ func ExampleClient_RegisterDomain() {
 
 func ExampleClient_RetrieveTransferParameters() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := domains.NewClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -123,6 +165,11 @@ func ExampleClient_RetrieveTransferParameters() {
 
 func ExampleClient_TransferDomain() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := domains.NewClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -148,6 +195,11 @@ func ExampleClient_TransferDomain() {
 
 func ExampleClient_ListRegistrations() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := domains.NewClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -174,6 +226,11 @@ func ExampleClient_ListRegistrations() {
 
 func ExampleClient_GetRegistration() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := domains.NewClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -194,6 +251,11 @@ func ExampleClient_GetRegistration() {
 
 func ExampleClient_UpdateRegistration() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := domains.NewClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -219,6 +281,11 @@ func ExampleClient_UpdateRegistration() {
 
 func ExampleClient_ConfigureManagementSettings() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := domains.NewClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -244,6 +311,11 @@ func ExampleClient_ConfigureManagementSettings() {
 
 func ExampleClient_ConfigureDnsSettings() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := domains.NewClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -269,6 +341,11 @@ func ExampleClient_ConfigureDnsSettings() {
 
 func ExampleClient_ConfigureContactSettings() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := domains.NewClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -294,6 +371,11 @@ func ExampleClient_ConfigureContactSettings() {
 
 func ExampleClient_ExportRegistration() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := domains.NewClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -319,6 +401,11 @@ func ExampleClient_ExportRegistration() {
 
 func ExampleClient_DeleteRegistration() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := domains.NewClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -342,6 +429,11 @@ func ExampleClient_DeleteRegistration() {
 
 func ExampleClient_RetrieveAuthorizationCode() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := domains.NewClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -362,6 +454,11 @@ func ExampleClient_RetrieveAuthorizationCode() {
 
 func ExampleClient_ResetAuthorizationCode() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := domains.NewClient(ctx)
 	if err != nil {
 		// TODO: Handle error.

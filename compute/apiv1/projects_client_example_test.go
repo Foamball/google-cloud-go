@@ -1,4 +1,4 @@
-// Copyright 2021 Google LLC
+// Copyright 2022 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +26,11 @@ import (
 
 func ExampleNewProjectsRESTClient() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewProjectsRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -38,6 +43,11 @@ func ExampleNewProjectsRESTClient() {
 
 func ExampleProjectsClient_DisableXpnHost() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewProjectsRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -48,16 +58,24 @@ func ExampleProjectsClient_DisableXpnHost() {
 		// TODO: Fill request struct fields.
 		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/compute/v1#DisableXpnHostProjectRequest.
 	}
-	resp, err := c.DisableXpnHost(ctx, req)
+	op, err := c.DisableXpnHost(ctx, req)
 	if err != nil {
 		// TODO: Handle error.
 	}
-	// TODO: Use resp.
-	_ = resp
+
+	err = op.Wait(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
 }
 
 func ExampleProjectsClient_DisableXpnResource() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewProjectsRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -68,16 +86,24 @@ func ExampleProjectsClient_DisableXpnResource() {
 		// TODO: Fill request struct fields.
 		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/compute/v1#DisableXpnResourceProjectRequest.
 	}
-	resp, err := c.DisableXpnResource(ctx, req)
+	op, err := c.DisableXpnResource(ctx, req)
 	if err != nil {
 		// TODO: Handle error.
 	}
-	// TODO: Use resp.
-	_ = resp
+
+	err = op.Wait(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
 }
 
 func ExampleProjectsClient_EnableXpnHost() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewProjectsRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -88,16 +114,24 @@ func ExampleProjectsClient_EnableXpnHost() {
 		// TODO: Fill request struct fields.
 		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/compute/v1#EnableXpnHostProjectRequest.
 	}
-	resp, err := c.EnableXpnHost(ctx, req)
+	op, err := c.EnableXpnHost(ctx, req)
 	if err != nil {
 		// TODO: Handle error.
 	}
-	// TODO: Use resp.
-	_ = resp
+
+	err = op.Wait(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
 }
 
 func ExampleProjectsClient_EnableXpnResource() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewProjectsRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -108,16 +142,24 @@ func ExampleProjectsClient_EnableXpnResource() {
 		// TODO: Fill request struct fields.
 		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/compute/v1#EnableXpnResourceProjectRequest.
 	}
-	resp, err := c.EnableXpnResource(ctx, req)
+	op, err := c.EnableXpnResource(ctx, req)
 	if err != nil {
 		// TODO: Handle error.
 	}
-	// TODO: Use resp.
-	_ = resp
+
+	err = op.Wait(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
 }
 
 func ExampleProjectsClient_Get() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewProjectsRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -138,6 +180,11 @@ func ExampleProjectsClient_Get() {
 
 func ExampleProjectsClient_GetXpnHost() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewProjectsRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -158,6 +205,11 @@ func ExampleProjectsClient_GetXpnHost() {
 
 func ExampleProjectsClient_GetXpnResources() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewProjectsRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -184,6 +236,11 @@ func ExampleProjectsClient_GetXpnResources() {
 
 func ExampleProjectsClient_ListXpnHosts() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewProjectsRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -210,6 +267,11 @@ func ExampleProjectsClient_ListXpnHosts() {
 
 func ExampleProjectsClient_MoveDisk() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewProjectsRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -220,16 +282,24 @@ func ExampleProjectsClient_MoveDisk() {
 		// TODO: Fill request struct fields.
 		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/compute/v1#MoveDiskProjectRequest.
 	}
-	resp, err := c.MoveDisk(ctx, req)
+	op, err := c.MoveDisk(ctx, req)
 	if err != nil {
 		// TODO: Handle error.
 	}
-	// TODO: Use resp.
-	_ = resp
+
+	err = op.Wait(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
 }
 
 func ExampleProjectsClient_MoveInstance() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewProjectsRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -240,16 +310,24 @@ func ExampleProjectsClient_MoveInstance() {
 		// TODO: Fill request struct fields.
 		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/compute/v1#MoveInstanceProjectRequest.
 	}
-	resp, err := c.MoveInstance(ctx, req)
+	op, err := c.MoveInstance(ctx, req)
 	if err != nil {
 		// TODO: Handle error.
 	}
-	// TODO: Use resp.
-	_ = resp
+
+	err = op.Wait(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
 }
 
 func ExampleProjectsClient_SetCommonInstanceMetadata() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewProjectsRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -260,16 +338,24 @@ func ExampleProjectsClient_SetCommonInstanceMetadata() {
 		// TODO: Fill request struct fields.
 		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/compute/v1#SetCommonInstanceMetadataProjectRequest.
 	}
-	resp, err := c.SetCommonInstanceMetadata(ctx, req)
+	op, err := c.SetCommonInstanceMetadata(ctx, req)
 	if err != nil {
 		// TODO: Handle error.
 	}
-	// TODO: Use resp.
-	_ = resp
+
+	err = op.Wait(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
 }
 
 func ExampleProjectsClient_SetDefaultNetworkTier() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewProjectsRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -280,16 +366,24 @@ func ExampleProjectsClient_SetDefaultNetworkTier() {
 		// TODO: Fill request struct fields.
 		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/compute/v1#SetDefaultNetworkTierProjectRequest.
 	}
-	resp, err := c.SetDefaultNetworkTier(ctx, req)
+	op, err := c.SetDefaultNetworkTier(ctx, req)
 	if err != nil {
 		// TODO: Handle error.
 	}
-	// TODO: Use resp.
-	_ = resp
+
+	err = op.Wait(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
 }
 
 func ExampleProjectsClient_SetUsageExportBucket() {
 	ctx := context.Background()
+	// This snippet has been automatically generated and should be regarded as a code template only.
+	// It will require modifications to work:
+	// - It may require correct/in-range values for request initialization.
+	// - It may require specifying regional endpoints when creating the service client as shown in:
+	//   https://pkg.go.dev/cloud.google.com/go#hdr-Client_Options
 	c, err := compute.NewProjectsRESTClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
@@ -300,10 +394,13 @@ func ExampleProjectsClient_SetUsageExportBucket() {
 		// TODO: Fill request struct fields.
 		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/compute/v1#SetUsageExportBucketProjectRequest.
 	}
-	resp, err := c.SetUsageExportBucket(ctx, req)
+	op, err := c.SetUsageExportBucket(ctx, req)
 	if err != nil {
 		// TODO: Handle error.
 	}
-	// TODO: Use resp.
-	_ = resp
+
+	err = op.Wait(ctx)
+	if err != nil {
+		// TODO: Handle error.
+	}
 }

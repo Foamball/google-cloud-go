@@ -47,7 +47,7 @@ var (
 
 	// "ms" must be specified before "m" in the regexp, to ensure "ms" is fully
 	// matched.
-	backoffTimeRE = regexp.MustCompile(`(\d+(\.\d+)?(ms|h|m|s|us))+`)
+	backoffTimeRE = regexp.MustCompile(`(?:^|\W)((\d+(\.\d+)?(ms|h|m|s|us))+)(?:$|\W)`)
 )
 
 // BaseStartupTmpl is the common part of the startup script that
@@ -225,14 +225,14 @@ func (pr *ProfileResponse) HasSourceFile(filename string) error {
 // StartInstance starts a GCE Instance with configs specified by inst,
 // and which runs the startup script specified in inst. If image project
 // is not specified, it defaults to "debian-cloud". If image family is
-// not specified, it defaults to "debian-9".
+// not specified, it defaults to "debian-10".
 func (tr *GCETestRunner) StartInstance(ctx context.Context, inst *InstanceConfig) error {
 	imageProject, imageFamily := inst.ImageProject, inst.ImageFamily
 	if imageProject == "" {
 		imageProject = "debian-cloud"
 	}
 	if imageFamily == "" {
-		imageFamily = "debian-9"
+		imageFamily = "debian-10"
 	}
 	img, err := tr.ComputeService.Images.GetFromFamily(imageProject, imageFamily).Context(ctx).Do()
 	if err != nil {
@@ -454,10 +454,11 @@ func parseLogTime(line string) (time.Time, error) {
 // parseBackoffDuration returns the backoff duration associated with a logged
 // line, or an error if the line does not contain a valid backoff duration.
 func parseBackoffDuration(line string) (time.Duration, error) {
-	backoffTimeStr := backoffTimeRE.FindString(line)
-	if backoffTimeStr == "" {
+	backoffTimeMatch := backoffTimeRE.FindStringSubmatch(line)
+	if len(backoffTimeMatch) < 2 || backoffTimeMatch[1] == "" {
 		return 0, fmt.Errorf("log for server-specified backoff %q does not include a backoff time", line)
 	}
+	backoffTimeStr := backoffTimeMatch[1]
 	backoff, err := time.ParseDuration(backoffTimeStr)
 	if err != nil {
 		return 0, fmt.Errorf("failed to parse backoff duration %q", backoffTimeStr)
