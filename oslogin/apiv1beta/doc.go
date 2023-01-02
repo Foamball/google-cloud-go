@@ -58,14 +58,16 @@
 //	}
 //	defer c.Close()
 //
-//	req := &osloginpb.DeletePosixAccountRequest{
+//	req := &osloginpb.CreateSshPublicKeyRequest{
 //		// TODO: Fill request struct fields.
-//		// See https://pkg.go.dev/google.golang.org/genproto/googleapis/cloud/oslogin/v1beta#DeletePosixAccountRequest.
+//		// See https://pkg.go.dev/cloud.google.com/go/oslogin/apiv1beta/osloginpb#CreateSshPublicKeyRequest.
 //	}
-//	err = c.DeletePosixAccount(ctx, req)
+//	resp, err := c.CreateSshPublicKey(ctx, req)
 //	if err != nil {
 //		// TODO: Handle error.
 //	}
+//	// TODO: Use resp.
+//	_ = resp
 //
 // # Use of Context
 //

@@ -96,6 +96,38 @@ func (cv CreateView) SQL() string {
 	return str
 }
 
+func (cs CreateChangeStream) SQL() string {
+	str := "CREATE CHANGE STREAM "
+	str += cs.Name.SQL() + " FOR "
+	if cs.WatchAllTables {
+		str += "ALL"
+	} else {
+		for i, table := range cs.Watch {
+			if i > 0 {
+				str += ", "
+			}
+			str += table.Table.SQL()
+			if !table.WatchAllCols {
+				str += "("
+				for i, c := range table.Columns {
+					if i > 0 {
+						str += ", "
+					}
+					str += c.SQL()
+				}
+				str += ")"
+			}
+		}
+	}
+	if cs.Options.RetentionPeriod != nil {
+		str += " OPTIONS( "
+		str += fmt.Sprintf("retention_period='%s'", *cs.Options.RetentionPeriod)
+		str += " )"
+	}
+
+	return str
+}
+
 func (dt DropTable) SQL() string {
 	return "DROP TABLE " + dt.Name.SQL()
 }
@@ -106,6 +138,18 @@ func (di DropIndex) SQL() string {
 
 func (dv DropView) SQL() string {
 	return "DROP VIEW " + dv.Name.SQL()
+}
+
+func (dc DropChangeStream) SQL() string {
+	return "DROP CHANGE STREAM " + dc.Name.SQL()
+}
+
+func (acs AlterChangeStream) SQL() string {
+	return "ALTER CHANGE STREAM " + acs.Name.SQL() + " SET " + acs.Alteration.SQL()
+}
+
+func (ao AlterChangeStreamOptions) SQL() string {
+	return "OPTIONS( " + fmt.Sprintf("retention_period='%s'", *ao.Options.RetentionPeriod) + " )"
 }
 
 func (at AlterTable) SQL() string {
@@ -648,6 +692,15 @@ func (aze AtTimeZoneExpr) addSQL(sb *strings.Builder) {
 	aze.Expr.addSQL(sb)
 	sb.WriteString(" AT TIME ZONE ")
 	sb.WriteString(aze.Zone)
+}
+
+func (ie IntervalExpr) SQL() string { return buildSQL(ie) }
+func (ie IntervalExpr) addSQL(sb *strings.Builder) {
+	sb.WriteString("INTERVAL")
+	sb.WriteString(" ")
+	ie.Expr.addSQL(sb)
+	sb.WriteString(" ")
+	sb.WriteString(ie.DatePart)
 }
 
 func idList(l []ID, join string) string {

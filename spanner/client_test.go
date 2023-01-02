@@ -28,11 +28,11 @@ import (
 
 	"cloud.google.com/go/civil"
 	itestutil "cloud.google.com/go/internal/testutil"
+	sppb "cloud.google.com/go/spanner/apiv1/spannerpb"
 	structpb "github.com/golang/protobuf/ptypes/struct"
 	"github.com/googleapis/gax-go/v2"
 	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
-	sppb "google.golang.org/genproto/googleapis/spanner/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -1146,6 +1146,35 @@ func TestClient_ReadWriteTransaction_DoNotLeakSessionOnPanic(t *testing.T) {
 	}
 }
 
+func TestClient_SessionContainsDatabaseRole(t *testing.T) {
+	// Make sure that there is always only one session in the pool.
+	sc := SessionPoolConfig{
+		MinOpened: 1,
+		MaxOpened: 1,
+	}
+	server, client, teardown := setupMockedTestServerWithConfig(t, ClientConfig{SessionPoolConfig: sc, DatabaseRole: "test"})
+	defer teardown()
+
+	// Wait until all sessions have been created, so we know that those requests will not interfere with the test.
+	sp := client.idleSessions
+	waitFor(t, func() error {
+		sp.mu.Lock()
+		defer sp.mu.Unlock()
+		if uint64(sp.idleList.Len()) != 1 {
+			return fmt.Errorf("num open sessions mismatch.\nGot: %d\nWant: %d", sp.numOpened, sp.MinOpened)
+		}
+		return nil
+	})
+
+	resp, err := server.TestSpanner.GetSession(context.Background(), &sppb.GetSessionRequest{Name: client.idleSessions.idleList.Front().Value.(*session).id})
+	if err != nil {
+		t.Fatalf("Failed to get session unexpectedly: %v", err)
+	}
+	if g, w := resp.CreatorRole, "test"; g != w {
+		t.Fatalf("database role mismatch.\nGot: %v\nWant: %v", g, w)
+	}
+}
+
 func TestClient_SessionNotFound(t *testing.T) {
 	// Ensure we always have at least one session in the pool.
 	sc := SessionPoolConfig{
@@ -1576,6 +1605,24 @@ func TestClient_ApplyAtLeastOnceInvalidArgument(t *testing.T) {
 	client.idleSessions.mu.Unlock()
 	if g != w {
 		t.Fatalf("checked out sessions count mismatch:\nGot: %v\nWant: %v", g, w)
+	}
+}
+
+func TestClient_ApplyAtLeastOnce_NonRetryableInternalErrors(t *testing.T) {
+	t.Parallel()
+	server, client, teardown := setupMockedTestServer(t)
+	defer teardown()
+	ms := []*Mutation{
+		Insert("Accounts", []string{"AccountId", "Nickname", "Balance"}, []interface{}{int64(1), "Foo", int64(50)}),
+		Insert("Accounts", []string{"AccountId", "Nickname", "Balance"}, []interface{}{int64(2), "Bar", int64(1)}),
+	}
+	server.TestSpanner.PutExecutionTime(MethodCommitTransaction,
+		SimulatedExecutionTime{
+			Errors: []error{status.Errorf(codes.Internal, "grpc: error while marshaling: string field contains invalid UTF-8")},
+		})
+	_, err := client.Apply(context.Background(), ms, ApplyAtLeastOnce())
+	if status.Code(err) != codes.Internal {
+		t.Fatalf("Error mismatch:\ngot: %v\nwant: %v", err, codes.Internal)
 	}
 }
 
@@ -3250,7 +3297,8 @@ func TestClient_CloseWithUnresponsiveBackend(t *testing.T) {
 	defer cancel()
 	sp.close(ctx)
 
-	if w, g := context.DeadlineExceeded, ctx.Err(); w != g {
-		t.Fatalf("context error mismatch\nWant: %v\nGot: %v", w, g)
+	// session pool close does not trigger any request to backend
+	if ctx.Err() != nil {
+		t.Fatalf("context error mismatch\nWant: nil\nGot: %v", ctx.Err())
 	}
 }
