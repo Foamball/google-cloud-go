@@ -26,9 +26,9 @@ import (
 	pb "cloud.google.com/go/firestore/apiv1/firestorepb"
 	"cloud.google.com/go/internal/btree"
 	"cloud.google.com/go/internal/trace"
-	"github.com/golang/protobuf/proto"
-	"github.com/golang/protobuf/ptypes/wrappers"
 	"google.golang.org/api/iterator"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // Query represents a Firestore query.
@@ -36,18 +36,21 @@ import (
 // Query values are immutable. Each Query method creates
 // a new Query; it does not modify the old.
 type Query struct {
-	c                      *Client
-	path                   string // path to query (collection)
-	parentPath             string // path of the collection's parent (document)
-	collectionID           string
-	selection              []*pb.StructuredQuery_FieldReference
-	filters                []*pb.StructuredQuery_Filter
-	orders                 []order
-	offset                 int32
-	limit                  *wrappers.Int32Value
-	limitToLast            bool
-	startVals, endVals     []interface{}
-	startDoc, endDoc       *DocumentSnapshot
+	c                  *Client
+	path               string // path to query (collection)
+	parentPath         string // path of the collection's parent (document)
+	collectionID       string
+	selection          []*pb.StructuredQuery_FieldReference
+	filters            []*pb.StructuredQuery_Filter
+	orders             []order
+	offset             int32
+	limit              *wrapperspb.Int32Value
+	limitToLast        bool
+	startVals, endVals []interface{}
+	startDoc, endDoc   *DocumentSnapshot
+
+	// Set startBefore to true when doc in startVals needs to be included in result
+	// Set endBefore to false when doc in endVals needs to be included in result
 	startBefore, endBefore bool
 	err                    error
 
@@ -118,6 +121,7 @@ func (q Query) SelectPaths(fieldPaths ...FieldPath) Query {
 // fields, and must not contain any of the runes "˜*/[]".
 // The op argument must be one of "==", "!=", "<", "<=", ">", ">=",
 // "array-contains", "array-contains-any", "in" or "not-in".
+// WARNING: Using WhereEntity with Simple and Composite filters is recommended.
 func (q Query) Where(path, op string, value interface{}) Query {
 	fp, err := parseDotSeparatedString(path)
 	if err != nil {
@@ -131,8 +135,23 @@ func (q Query) Where(path, op string, value interface{}) Query {
 // A Query can have multiple filters.
 // The op argument must be one of "==", "!=", "<", "<=", ">", ">=",
 // "array-contains", "array-contains-any", "in" or "not-in".
+// WARNING: Using WhereEntity with Simple and Composite filters is recommended.
 func (q Query) WherePath(fp FieldPath, op string, value interface{}) Query {
-	proto, err := filter{fp, op, value}.toProto()
+	return q.WhereEntity(PropertyPathFilter{
+		Path:     fp,
+		Operator: op,
+		Value:    value,
+	})
+}
+
+// WhereEntity returns a query with provided filter.
+//
+// EntityFilter can be a simple filter or a composite filter
+// PropertyFilter and PropertyPathFilter are supported simple filters
+// AndFilter and OrFilter are supported composite filters
+// Entity filters in multiple calls are joined together by AND
+func (q Query) WhereEntity(ef EntityFilter) Query {
+	proto, err := ef.toProto()
 	if err != nil {
 		q.err = err
 		return q
@@ -192,7 +211,7 @@ func (q Query) Offset(n int) Query {
 // Limit returns a new Query that specifies the maximum number of first results
 // to return. It must not be negative.
 func (q Query) Limit(n int) Query {
-	q.limit = &wrappers.Int32Value{Value: trunc32(n)}
+	q.limit = &wrapperspb.Int32Value{Value: trunc32(n)}
 	q.limitToLast = false
 	return q
 }
@@ -200,7 +219,7 @@ func (q Query) Limit(n int) Query {
 // LimitToLast returns a new Query that specifies the maximum number of last
 // results to return. It must not be negative.
 func (q Query) LimitToLast(n int) Query {
-	q.limit = &wrappers.Int32Value{Value: trunc32(n)}
+	q.limit = &wrapperspb.Int32Value{Value: trunc32(n)}
 	q.limitToLast = true
 	return q
 }
@@ -273,6 +292,43 @@ func (q *Query) processCursorArg(name string, docSnapshotOrFieldValues []interfa
 		}
 	}
 	return docSnapshotOrFieldValues, nil, nil
+}
+
+func (q *Query) processLimitToLast() {
+	if q.limitToLast {
+		// Firestore service does not provide limit to last behaviour out of the box. This is a client-side concept
+		// So, flip order statements and cursors before posting a request. The response is flipped by other methods before returning to user
+		// E.g.
+		// If id of documents is 1, 2, 3, 4, 5, 6, 7 and query is (OrderBy(id, ASC), StartAt(2), EndAt(6), LimitToLast(3))
+		// request sent to server is  (OrderBy(id, DESC), StartAt(6), EndAt(2), Limit(3))
+		for i := range q.orders {
+			if q.orders[i].dir == Asc {
+				q.orders[i].dir = Desc
+			} else {
+				q.orders[i].dir = Asc
+			}
+		}
+
+		if q.startBefore == q.endBefore && q.startCursorSpecified() && q.endCursorSpecified() {
+			// E.g. query.StartAt(2).EndBefore(6).LimitToLast(3).OrderBy(Asc) i.e. cursors are [2, 6)
+			// E.g. query.StartAfter(2).EndAt(6).LimitToLast(3).OrderBy(Asc)  i.e. cursors are (2, 6]
+			q.startBefore, q.endBefore = !q.startBefore, !q.endBefore
+		} else if !q.startCursorSpecified() && q.endCursorSpecified() {
+			// E.g. query.EndAt(6).LimitToLast(3).OrderBy(Asc) i.e. cursors are (-inf, 6]
+			q.startBefore = !q.endBefore
+			q.endBefore = false
+		} else if q.startCursorSpecified() && !q.endCursorSpecified() {
+			// E.g. query.StartAt(2).LimitToLast(3).OrderBy(Asc) i.e. cursors are [2, inf)
+			q.endBefore = !q.startBefore
+			q.startBefore = false
+		}
+
+		// Swap cursors.
+		q.startVals, q.endVals = q.endVals, q.startVals
+		q.startDoc, q.endDoc = q.endDoc, q.startDoc
+
+		q.limitToLast = false
+	}
 }
 
 func (q Query) query() *Query { return &q }
@@ -414,7 +470,7 @@ func (q Query) fromProto(pbQuery *pb.RunQueryRequest) (Query, error) {
 	// 	offset                 int32
 	q.offset = pbq.GetOffset()
 
-	// 	limit                  *wrappers.Int32Value
+	// 	limit                  *wrapperspb.Int32Value
 	if limit := pbq.GetLimit(); limit != nil {
 		q.limit = limit
 	}
@@ -422,6 +478,14 @@ func (q Query) fromProto(pbQuery *pb.RunQueryRequest) (Query, error) {
 	// NOTE: limit to last isn't part of the proto, this is a client-side concept
 	// 	limitToLast            bool
 	return q, q.err
+}
+
+func (q Query) startCursorSpecified() bool {
+	return len(q.startVals) != 0 || q.startDoc != nil
+}
+
+func (q Query) endCursorSpecified() bool {
+	return len(q.endVals) != 0 || q.endDoc != nil
 }
 
 func (q Query) toProto() (*pb.StructuredQuery, error) {
@@ -432,12 +496,12 @@ func (q Query) toProto() (*pb.StructuredQuery, error) {
 		return nil, errors.New("firestore: query created without CollectionRef")
 	}
 	if q.startBefore {
-		if len(q.startVals) == 0 && q.startDoc == nil {
+		if !q.startCursorSpecified() {
 			return nil, errors.New("firestore: StartAt/StartAfter must be called with at least one value")
 		}
 	}
 	if q.endBefore {
-		if len(q.endVals) == 0 && q.endDoc == nil {
+		if !q.endCursorSpecified() {
 			return nil, errors.New("firestore: EndAt/EndBefore must be called with at least one value")
 		}
 	}
@@ -464,7 +528,9 @@ func (q Query) toProto() (*pb.StructuredQuery, error) {
 			Op: pb.StructuredQuery_CompositeFilter_AND,
 		}
 		p.Where = &pb.StructuredQuery_Filter{
-			FilterType: &pb.StructuredQuery_Filter_CompositeFilter{cf},
+			FilterType: &pb.StructuredQuery_Filter_CompositeFilter{
+				CompositeFilter: cf,
+			},
 		}
 		cf.Filters = append(cf.Filters, q.filters...)
 	}
@@ -556,7 +622,7 @@ func (q *Query) fieldValuesToCursorValues(fieldValues []interface{}) ([]*pb.Valu
 
 			switch docID := fval.(type) {
 			case string:
-				vals[i] = &pb.Value{ValueType: &pb.Value_ReferenceValue{q.path + "/" + docID}}
+				vals[i] = &pb.Value{ValueType: &pb.Value_ReferenceValue{ReferenceValue: q.path + "/" + docID}}
 				continue
 			case *DocumentRef:
 				// DocumentRef can be transformed in usual way.
@@ -585,7 +651,7 @@ func (q *Query) docSnapshotToCursorValues(ds *DocumentSnapshot, orders []order) 
 			if !q.allDescendants && dp != qp {
 				return nil, fmt.Errorf("firestore: document snapshot for %s passed to query on %s", dp, qp)
 			}
-			vals[i] = &pb.Value{ValueType: &pb.Value_ReferenceValue{ds.Ref.Path}}
+			vals[i] = &pb.Value{ValueType: &pb.Value_ReferenceValue{ReferenceValue: ds.Ref.Path}}
 		} else {
 			var val *pb.Value
 			var err error
@@ -619,7 +685,7 @@ func (q Query) compareFunc() func(d1, d2 *DocumentSnapshot) (int, error) {
 	return func(d1, d2 *DocumentSnapshot) (int, error) {
 		for _, ord := range orders {
 			var cmp int
-			if len(ord.fieldPath) == 1 && ord.fieldPath[0] == DocumentID {
+			if ord.isDocumentID() {
 				cmp = compareReferences(d1.Ref.Path, d2.Ref.Path)
 			} else {
 				v1, err := valueAtPath(ord.fieldPath, d1.proto.Fields)
@@ -643,21 +709,143 @@ func (q Query) compareFunc() func(d1, d2 *DocumentSnapshot) (int, error) {
 	}
 }
 
-type filter struct {
-	fieldPath FieldPath
-	op        string
-	value     interface{}
+// EntityFilter represents a Firestore filter.
+type EntityFilter interface {
+	toProto() (*pb.StructuredQuery_Filter, error)
 }
 
-func (f filter) toProto() (*pb.StructuredQuery_Filter, error) {
-	if err := f.fieldPath.validate(); err != nil {
+// CompositeFilter represents a composite Firestore filter.
+type CompositeFilter interface {
+	EntityFilter
+	isCompositeFilter()
+}
+
+// OrFilter represents a union of two or more filters.
+type OrFilter struct {
+	Filters []EntityFilter
+}
+
+func (OrFilter) isCompositeFilter() {}
+
+func (f OrFilter) toProto() (*pb.StructuredQuery_Filter, error) {
+	var pbFilters []*pb.StructuredQuery_Filter
+
+	for _, filter := range f.Filters {
+		pbFilter, err := filter.toProto()
+		if err != nil {
+			return nil, err
+		}
+		pbFilters = append(pbFilters, pbFilter)
+	}
+
+	cf := &pb.StructuredQuery_CompositeFilter{
+		Op: pb.StructuredQuery_CompositeFilter_OR,
+	}
+	cf.Filters = append(cf.Filters, pbFilters...)
+
+	return &pb.StructuredQuery_Filter{
+		FilterType: &pb.StructuredQuery_Filter_CompositeFilter{
+			CompositeFilter: cf,
+		},
+	}, nil
+
+}
+
+// AndFilter represents the intersection of two or more filters.
+type AndFilter struct {
+	Filters []EntityFilter
+}
+
+func (AndFilter) isCompositeFilter() {}
+
+func (f AndFilter) toProto() (*pb.StructuredQuery_Filter, error) {
+	var pbFilters []*pb.StructuredQuery_Filter
+
+	for _, filter := range f.Filters {
+		pbFilter, err := filter.toProto()
+		if err != nil {
+			return nil, err
+		}
+		pbFilters = append(pbFilters, pbFilter)
+	}
+
+	cf := &pb.StructuredQuery_CompositeFilter{
+		Op: pb.StructuredQuery_CompositeFilter_AND,
+	}
+	cf.Filters = append(cf.Filters, pbFilters...)
+
+	return &pb.StructuredQuery_Filter{
+		FilterType: &pb.StructuredQuery_Filter_CompositeFilter{
+			CompositeFilter: cf,
+		},
+	}, nil
+
+}
+
+// SimpleFilter represents a simple Firestore filter.
+type SimpleFilter interface {
+	EntityFilter
+	isSimpleFilter()
+}
+
+// PropertyFilter represents a filter on single property.
+//
+// Path can be a single field or a dot-separated sequence of fields
+// denoting property path, and must not contain any of the runes "˜*/[]".
+// Operator must be one of "==", "!=", "<", "<=", ">", ">=",
+// "array-contains", "array-contains-any", "in" or "not-in".
+type PropertyFilter struct {
+	Path     string
+	Operator string
+	Value    interface{}
+}
+
+func (PropertyFilter) isSimpleFilter() {}
+
+func (f PropertyFilter) toPropertyPathFilter() (PropertyPathFilter, error) {
+	fp, err := parseDotSeparatedString(f.Path)
+	if err != nil {
+		return PropertyPathFilter{}, err
+	}
+
+	ppf := PropertyPathFilter{
+		Path:     fp,
+		Operator: f.Operator,
+		Value:    f.Value,
+	}
+	return ppf, nil
+}
+
+func (f PropertyFilter) toProto() (*pb.StructuredQuery_Filter, error) {
+	ppf, err := f.toPropertyPathFilter()
+	if err != nil {
 		return nil, err
 	}
-	if uop, ok := unaryOpFor(f.value); ok {
-		if f.op != "==" {
-			return nil, fmt.Errorf("firestore: must use '==' when comparing %v", f.value)
+	return ppf.toProto()
+}
+
+// PropertyPathFilter represents a filter on single property.
+//
+// Path can be an array of fields denoting property path.
+// Operator must be one of "==", "!=", "<", "<=", ">", ">=",
+// "array-contains", "array-contains-any", "in" or "not-in".
+type PropertyPathFilter struct {
+	Path     FieldPath
+	Operator string
+	Value    interface{}
+}
+
+func (PropertyPathFilter) isSimpleFilter() {}
+
+func (f PropertyPathFilter) toProto() (*pb.StructuredQuery_Filter, error) {
+	if err := f.Path.validate(); err != nil {
+		return nil, err
+	}
+	if uop, ok := unaryOpFor(f.Value); ok {
+		if f.Operator != "==" {
+			return nil, fmt.Errorf("firestore: must use '==' when comparing %v", f.Value)
 		}
-		ref, err := fref(f.fieldPath)
+		ref, err := fref(f.Path)
 		if err != nil {
 			return nil, err
 		}
@@ -673,7 +861,7 @@ func (f filter) toProto() (*pb.StructuredQuery_Filter, error) {
 		}, nil
 	}
 	var op pb.StructuredQuery_FieldFilter_Operator
-	switch f.op {
+	switch f.Operator {
 	case "<":
 		op = pb.StructuredQuery_FieldFilter_LESS_THAN
 	case "<=":
@@ -695,16 +883,16 @@ func (f filter) toProto() (*pb.StructuredQuery_Filter, error) {
 	case "array-contains-any":
 		op = pb.StructuredQuery_FieldFilter_ARRAY_CONTAINS_ANY
 	default:
-		return nil, fmt.Errorf("firestore: invalid operator %q", f.op)
+		return nil, fmt.Errorf("firestore: invalid operator %q", f.Operator)
 	}
-	val, sawTransform, err := toProtoValue(reflect.ValueOf(f.value))
+	val, sawTransform, err := toProtoValue(reflect.ValueOf(f.Value))
 	if err != nil {
 		return nil, err
 	}
 	if sawTransform {
 		return nil, errors.New("firestore: transforms disallowed in query value")
 	}
-	ref, err := fref(f.fieldPath)
+	ref, err := fref(f.Path)
 	if err != nil {
 		return nil, err
 	}
@@ -852,22 +1040,7 @@ func (it *DocumentIterator) GetAll() ([]*DocumentSnapshot, error) {
 
 	q := it.q
 	limitedToLast := q.limitToLast
-	if q.limitToLast {
-		// Flip order statements before posting a request.
-		for i := range q.orders {
-			if q.orders[i].dir == Asc {
-				q.orders[i].dir = Desc
-			} else {
-				q.orders[i].dir = Asc
-			}
-		}
-		// Swap cursors.
-		q.startVals, q.endVals = q.endVals, q.startVals
-		q.startDoc, q.endDoc = q.endDoc, q.startDoc
-		q.startBefore, q.endBefore = q.endBefore, q.startBefore
-
-		q.limitToLast = false
-	}
+	q.processLimitToLast()
 	var docs []*DocumentSnapshot
 	for {
 		doc, err := it.Next()
@@ -914,7 +1087,13 @@ func (it *queryDocumentIterator) next() (_ *DocumentSnapshot, err error) {
 	client := it.q.c
 	if it.streamClient == nil {
 		it.ctx = trace.StartSpan(it.ctx, "cloud.google.com/go/firestore.Query.RunQuery")
-		defer func() { trace.EndSpan(it.ctx, err) }()
+		defer func() {
+			if errors.Is(err, iterator.Done) {
+				trace.EndSpan(it.ctx, nil)
+			} else {
+				trace.EndSpan(it.ctx, err)
+			}
+		}()
 
 		sq, err := it.q.toProto()
 		if err != nil {
@@ -1072,6 +1251,25 @@ type AggregationQuery struct {
 	aggregateQueries []*pb.StructuredAggregationQuery_Aggregation
 	// query contains a reference pointer to the underlying structured query.
 	query *Query
+	//  tx points to an already active transaction within which the AggregationQuery runs
+	tx *Transaction
+}
+
+// Transaction specifies that aggregation query should run within provided transaction
+func (a *AggregationQuery) Transaction(tx *Transaction) *AggregationQuery {
+	a = a.clone()
+	a.tx = tx
+	return a
+}
+
+func (a *AggregationQuery) clone() *AggregationQuery {
+	x := *a
+	// Copy the contents of the slice-typed fields to a new backing store.
+	if len(a.aggregateQueries) > 0 {
+		x.aggregateQueries = make([]*pb.StructuredAggregationQuery_Aggregation, len(a.aggregateQueries))
+		copy(x.aggregateQueries, a.aggregateQueries)
+	}
+	return &x
 }
 
 // WithCount specifies that the aggregation query provide a count of results
@@ -1087,9 +1285,92 @@ func (a *AggregationQuery) WithCount(alias string) *AggregationQuery {
 	return a
 }
 
+// WithSumPath specifies that the aggregation query should provide a sum of the values
+// of the provided field in the results returned by the underlying Query.
+// The path argument can be a single field or a dot-separated sequence of
+// fields, and must not contain any of the runes "˜*/[]".
+// The alias argument can be empty or a valid Firestore document field name. It can be used
+// as key in the AggregationResult to get the sum value. If alias is empty, Firestore
+// will autogenerate a key.
+func (a *AggregationQuery) WithSumPath(fp FieldPath, alias string) *AggregationQuery {
+	ref, err := fref(fp)
+	if err != nil {
+		a.query.err = err
+		return a
+	}
+
+	aq := &pb.StructuredAggregationQuery_Aggregation{
+		Alias: alias,
+		Operator: &pb.StructuredAggregationQuery_Aggregation_Sum_{
+			Sum: &pb.StructuredAggregationQuery_Aggregation_Sum{
+				Field: ref,
+			},
+		},
+	}
+
+	a.aggregateQueries = append(a.aggregateQueries, aq)
+	return a
+}
+
+// WithSum specifies that the aggregation query should provide a sum of the values
+// of the provided field in the results returned by the underlying Query.
+// The alias argument can be empty or a valid Firestore document field name. It can be used
+// as key in the AggregationResult to get the sum value. If alias is empty, Firestore
+// will autogenerate a key.
+func (a *AggregationQuery) WithSum(path string, alias string) *AggregationQuery {
+	fp, err := parseDotSeparatedString(path)
+	if err != nil {
+		a.query.err = err
+		return a
+	}
+	return a.WithSumPath(fp, alias)
+}
+
+// WithAvgPath specifies that the aggregation query should provide an average of the values
+// of the provided field in the results returned by the underlying Query.
+// The path argument can be a single field or a dot-separated sequence of
+// fields, and must not contain any of the runes "˜*/[]".
+// The alias argument can be empty or a valid Firestore document field name. It can be used
+// as key in the AggregationResult to get the average value. If alias is empty, Firestore
+// will autogenerate a key.
+func (a *AggregationQuery) WithAvgPath(fp FieldPath, alias string) *AggregationQuery {
+	ref, err := fref(fp)
+	if err != nil {
+		a.query.err = err
+		return a
+	}
+
+	aq := &pb.StructuredAggregationQuery_Aggregation{
+		Alias: alias,
+		Operator: &pb.StructuredAggregationQuery_Aggregation_Avg_{
+			Avg: &pb.StructuredAggregationQuery_Aggregation_Avg{
+				Field: ref,
+			},
+		},
+	}
+
+	a.aggregateQueries = append(a.aggregateQueries, aq)
+	return a
+}
+
+// WithAvg specifies that the aggregation query should provide an average of the values
+// of the provided field in the results returned by the underlying Query.
+// The alias argument can be empty or a valid Firestore document field name. It can be used
+// as key in the AggregationResult to get the average value. If alias is empty, Firestore
+// will autogenerate a key.
+func (a *AggregationQuery) WithAvg(path string, alias string) *AggregationQuery {
+	fp, err := parseDotSeparatedString(path)
+	if err != nil {
+		a.query.err = err
+		return a
+	}
+	return a.WithAvgPath(fp, alias)
+}
+
 // Get retrieves the aggregation query results from the service.
 func (a *AggregationQuery) Get(ctx context.Context) (AggregationResult, error) {
 
+	a.query.processLimitToLast()
 	client := a.query.c.c
 	q, err := a.query.toProto()
 	if err != nil {
@@ -1107,6 +1388,13 @@ func (a *AggregationQuery) Get(ctx context.Context) (AggregationResult, error) {
 			},
 		},
 	}
+
+	if a.tx != nil {
+		req.ConsistencySelector = &pb.RunAggregationQueryRequest_Transaction{
+			Transaction: a.tx.id,
+		}
+	}
+
 	ctx = withResourceHeader(ctx, a.query.c.path())
 	stream, err := client.RunAggregationQuery(ctx, req)
 	if err != nil {

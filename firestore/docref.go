@@ -28,6 +28,7 @@ import (
 	"google.golang.org/api/iterator"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
 )
 
 var errNilDocRef = errors.New("firestore: nil DocumentRef")
@@ -110,7 +111,7 @@ func (d *DocumentRef) Get(ctx context.Context) (_ *DocumentSnapshot, err error) 
 //   - float32 and float64 convert to Double.
 //   - []byte converts to Bytes.
 //   - time.Time and *ts.Timestamp convert to Timestamp. ts is the package
-//     "github.com/golang/protobuf/ptypes/timestamp".
+//     "google.golang.org/protobuf/types/known/timestamppb".
 //   - *latlng.LatLng converts to GeoPoint. latlng is the package
 //     "google.golang.org/genproto/googleapis/type/latlng". You should always use
 //     a pointer to a LatLng.
@@ -266,7 +267,7 @@ func (d *DocumentRef) newDeleteWrites(preconds []Precondition) ([]*pb.Write, err
 		return nil, err
 	}
 	return []*pb.Write{{
-		Operation:       &pb.Write_Delete{d.Path},
+		Operation:       &pb.Write_Delete{Delete: d.Path},
 		CurrentDocument: pc,
 	}}, nil
 }
@@ -363,7 +364,7 @@ func (d *DocumentRef) fpvsToWrites(fpvs []fpv, pc *pb.Precondition) ([]*pb.Write
 }
 
 // newUpdateWithTransform constructs operations for a commit. Most generally, it
-// returns an update operation followed by a transform.
+// returns an update operation with update transforms.
 //
 // If there are no serverTimestampPaths, the transform is omitted.
 //
@@ -371,32 +372,35 @@ func (d *DocumentRef) fpvsToWrites(fpvs []fpv, pc *pb.Precondition) ([]*pb.Write
 // the update is omitted, unless updateOnEmpty is true.
 func (d *DocumentRef) newUpdateWithTransform(doc *pb.Document, updatePaths []FieldPath, pc *pb.Precondition, transforms []*pb.DocumentTransform_FieldTransform, updateOnEmpty bool) []*pb.Write {
 	var ws []*pb.Write
+	var w *pb.Write
+	initializedW := &pb.Write{
+		Operation: &pb.Write_Update{
+			Update: doc,
+		},
+		CurrentDocument: pc,
+		// If the mask is not set for an `update` and the document exists, any
+		// existing data will be overwritten.
+		UpdateMask: &pb.DocumentMask{},
+	}
 	if updateOnEmpty || len(doc.Fields) > 0 ||
 		len(updatePaths) > 0 || (pc != nil && len(transforms) == 0) {
+		w = initializedW
 		var mask *pb.DocumentMask
 		if updatePaths != nil {
 			sfps := toServiceFieldPaths(updatePaths)
 			sort.Strings(sfps) // TODO(jba): make tests pass without this
 			mask = &pb.DocumentMask{FieldPaths: sfps}
 		}
-		w := &pb.Write{
-			Operation:       &pb.Write_Update{doc},
-			UpdateMask:      mask,
-			CurrentDocument: pc,
-		}
-		ws = append(ws, w)
-		pc = nil // If the precondition is in the write, we don't need it in the transform.
+		w.UpdateMask = mask
 	}
 	if len(transforms) > 0 || pc != nil {
-		ws = append(ws, &pb.Write{
-			Operation: &pb.Write_Transform{
-				Transform: &pb.DocumentTransform{
-					Document:        d.Path,
-					FieldTransforms: transforms,
-				},
-			},
-			CurrentDocument: pc,
-		})
+		if w == nil {
+			w = initializedW
+		}
+		w.UpdateTransforms = transforms
+	}
+	if w != nil {
+		ws = append(ws, w)
 	}
 	return ws
 }
@@ -600,9 +604,10 @@ func fieldTransform(ar transform, fp FieldPath) (*pb.DocumentTransform_FieldTran
 	if ar.err != nil {
 		return nil, ar.err
 	}
-	ft := *ar.t
+	newFt := proto.Clone(ar.t)
+	ft := newFt.(*pb.DocumentTransform_FieldTransform)
 	ft.FieldPath = fp.toServiceFieldPath()
-	return &ft, nil
+	return ft, nil
 }
 
 type sentinel int

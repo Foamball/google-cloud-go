@@ -26,6 +26,7 @@ import (
 	sppb "cloud.google.com/go/spanner/apiv1/spannerpb"
 	. "cloud.google.com/go/spanner/internal/testutil"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/encoding/gzip"
 	"google.golang.org/grpc/status"
 )
 
@@ -150,7 +151,7 @@ func TestPartitionedUpdate_QueryOptions(t *testing.T) {
 			}
 
 			ctx := context.Background()
-			server, client, teardown := setupMockedTestServerWithConfig(t, ClientConfig{QueryOptions: tt.client})
+			server, client, teardown := setupMockedTestServerWithConfig(t, ClientConfig{QueryOptions: tt.client, Compression: gzip.Name})
 			defer teardown()
 
 			var err error
@@ -176,5 +177,27 @@ func TestPartitionedUpdate_Tagging(t *testing.T) {
 	if err != nil {
 		t.Fatalf("expect no errors, but got %v", err)
 	}
-	checkRequestsForExpectedRequestOptions(t, server.TestSpanner, 1, sppb.RequestOptions{RequestTag: "pdml-tag"})
+	checkRequestsForExpectedRequestOptions(t, server.TestSpanner, 1, &sppb.RequestOptions{RequestTag: "pdml-tag"})
+}
+
+func TestPartitionedUpdate_ExcludeTxnFromChangeStreams(t *testing.T) {
+	ctx := context.Background()
+	server, client, teardown := setupMockedTestServer(t)
+	defer teardown()
+
+	_, err := client.PartitionedUpdateWithOptions(ctx, NewStatement(UpdateBarSetFoo), QueryOptions{ExcludeTxnFromChangeStreams: true})
+	if err != nil {
+		t.Fatalf("expect no errors, but got %v", err)
+	}
+	requests := drainRequestsFromServer(server.TestSpanner)
+	if err := compareRequests([]interface{}{
+		&sppb.BatchCreateSessionsRequest{},
+		&sppb.BeginTransactionRequest{},
+		&sppb.ExecuteSqlRequest{}}, requests); err != nil {
+		t.Fatal(err)
+	}
+
+	if !requests[1].(*sppb.BeginTransactionRequest).GetOptions().GetExcludeTxnFromChangeStreams() {
+		t.Fatal("Transaction is not set to be excluded from change streams")
+	}
 }

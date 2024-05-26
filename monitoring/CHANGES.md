@@ -1,5 +1,138 @@
 # Changes
 
+## [1.19.0](https://github.com/googleapis/google-cloud-go/compare/monitoring/v1.18.2...monitoring/v1.19.0) (2024-05-01)
+
+
+### Features
+
+* **monitoring/apiv3:** Added CloudRun, GkeNamespace, GkeWorkload, GkeService, and BasicService service types ([1d757c6](https://github.com/googleapis/google-cloud-go/commit/1d757c66478963d6cbbef13fee939632c742759c))
+* **monitoring/apiv3:** Added Synthetic Monitor targets to Uptime data model ([1d757c6](https://github.com/googleapis/google-cloud-go/commit/1d757c66478963d6cbbef13fee939632c742759c))
+
+
+### Bug Fixes
+
+* **monitoring/apiv3:** Defined class prefix of GMON for Objective C ([1d757c6](https://github.com/googleapis/google-cloud-go/commit/1d757c66478963d6cbbef13fee939632c742759c))
+* **monitoring:** Bump x/net to v0.24.0 ([ba31ed5](https://github.com/googleapis/google-cloud-go/commit/ba31ed5fda2c9664f2e1cf972469295e63deb5b4))
+
+## [1.18.2](https://github.com/googleapis/google-cloud-go/compare/monitoring/v1.18.1...monitoring/v1.18.2) (2024-04-15)
+
+
+### Documentation
+
+* **monitoring/apiv3:** Various updates ([8892943](https://github.com/googleapis/google-cloud-go/commit/8892943b169060f8ba7be227cd65680696c494a0))
+
+## [1.18.1](https://github.com/googleapis/google-cloud-go/compare/monitoring/v1.18.0...monitoring/v1.18.1) (2024-03-14)
+
+
+### Bug Fixes
+
+* **monitoring:** Update protobuf dep to v1.33.0 ([30b038d](https://github.com/googleapis/google-cloud-go/commit/30b038d8cac0b8cd5dd4761c87f3f298760dd33a))
+
+## [1.18.0](https://github.com/googleapis/google-cloud-go/compare/monitoring/v1.17.1...monitoring/v1.18.0) (2024-02-09)
+
+
+### Features
+
+* **monitoring/dashboard:** Add support for pie charts, incident lists, dropdown groups, error reporting panels, section headers, and styling options on text widgets ([f049c97](https://github.com/googleapis/google-cloud-go/commit/f049c9751415f9fc4c81c1839a8371782cfc016c))
+
+## [1.17.1](https://github.com/googleapis/google-cloud-go/compare/monitoring/v1.17.0...monitoring/v1.17.1) (2024-01-30)
+
+
+### Bug Fixes
+
+* **monitoring:** Enable universe domain resolution options ([fd1d569](https://github.com/googleapis/google-cloud-go/commit/fd1d56930fa8a747be35a224611f4797b8aeb698))
+
+## [1.17.0](https://github.com/googleapis/google-cloud-go/compare/monitoring/v1.16.3...monitoring/v1.17.0) (2023-12-13)
+
+
+### Features
+
+* **monitoring/apiv3:** Added support for severity in AlertPolicy ([3d9f556](https://github.com/googleapis/google-cloud-go/commit/3d9f55678654fe678d44f3f4a08bf26c3830b653))
+
+## [1.16.3](https://github.com/googleapis/google-cloud-go/compare/monitoring/v1.16.2...monitoring/v1.16.3) (2023-11-01)
+
+
+### Bug Fixes
+
+* **monitoring:** Bump google.golang.org/api to v0.149.0 ([8d2ab9f](https://github.com/googleapis/google-cloud-go/commit/8d2ab9f320a86c1c0fab90513fc05861561d0880))
+
+## [1.16.2](https://github.com/googleapis/google-cloud-go/compare/monitoring/v1.16.1...monitoring/v1.16.2) (2023-10-26)
+
+
+### Bug Fixes
+
+* **monitoring:** Update grpc-go to v1.59.0 ([81a97b0](https://github.com/googleapis/google-cloud-go/commit/81a97b06cb28b25432e4ece595c55a9857e960b7))
+
+## [1.16.1](https://github.com/googleapis/google-cloud-go/compare/monitoring/v1.16.0...monitoring/v1.16.1) (2023-10-12)
+
+
+### Bug Fixes
+
+* **monitoring:** Update golang.org/x/net to v0.17.0 ([174da47](https://github.com/googleapis/google-cloud-go/commit/174da47254fefb12921bbfc65b7829a453af6f5d))
+
+## [1.16.0](https://github.com/googleapis/google-cloud-go/compare/monitoring/v1.15.1...monitoring/v1.16.0) (2023-09-12)
+
+
+### Features
+
+* **monitoring/apiv3:** Added support for retriggering notifications in AlertPolicy ([0449518](https://github.com/googleapis/google-cloud-go/commit/0449518f8396cc0280c0f3303c103edcee34016b))
+
+## [1.15.1](https://github.com/googleapis/google-cloud-go/compare/monitoring/v1.15.0...monitoring/v1.15.1) (2023-06-20)
+
+
+### Bug Fixes
+
+* **monitoring:** REST query UpdateMask bug ([df52820](https://github.com/googleapis/google-cloud-go/commit/df52820b0e7721954809a8aa8700b93c5662dc9b))
+
+## [1.15.0](https://github.com/googleapis/google-cloud-go/compare/monitoring/v1.14.0...monitoring/v1.15.0) (2023-05-30)
+
+
+### Features
+
+* **monitoring:** Update all direct dependencies ([b340d03](https://github.com/googleapis/google-cloud-go/commit/b340d030f2b52a4ce48846ce63984b28583abde6))
+
+## [1.14.0](https://github.com/googleapis/google-cloud-go/compare/monitoring/v1.13.1...monitoring/v1.14.0) (2023-05-10)
+
+
+### Features
+
+* **monitoring/apiv3:** Add ICMP pings ([31c3766](https://github.com/googleapis/google-cloud-go/commit/31c3766c9c4cab411669c14fc1a30bd6d2e3f2dd))
+
+## [1.13.1](https://github.com/googleapis/google-cloud-go/compare/monitoring/v1.13.0...monitoring/v1.13.1) (2023-05-08)
+
+
+### Bug Fixes
+
+* **monitoring:** Update grpc to v1.55.0 ([1147ce0](https://github.com/googleapis/google-cloud-go/commit/1147ce02a990276ca4f8ab7a1ab65c14da4450ef))
+
+## [1.13.0](https://github.com/googleapis/google-cloud-go/compare/monitoring/v1.12.0...monitoring/v1.13.0) (2023-03-15)
+
+
+### Features
+
+* **monitoring:** Update iam and longrunning deps ([91a1f78](https://github.com/googleapis/google-cloud-go/commit/91a1f784a109da70f63b96414bba8a9b4254cddd))
+
+## [1.12.0](https://github.com/googleapis/google-cloud-go/compare/monitoring/v1.11.0...monitoring/v1.12.0) (2023-01-18)
+
+
+### Features
+
+* **monitoring/dashboard:** Added support for horizontal bar rendering and column settings on time series tables ([1fb0c5e](https://github.com/googleapis/google-cloud-go/commit/1fb0c5e105dcae3a30b2e5b10ee47b84cbef8295))
+
+## [1.11.0](https://github.com/googleapis/google-cloud-go/compare/monitoring/v1.10.0...monitoring/v1.11.0) (2023-01-10)
+
+
+### Features
+
+* **monitoring/apiv3:** Added Snooze API support ([3115df4](https://github.com/googleapis/google-cloud-go/commit/3115df407cd4876d58c79e726308e9f229ceb6ed))
+
+## [1.10.0](https://github.com/googleapis/google-cloud-go/compare/monitoring/v1.9.1...monitoring/v1.10.0) (2023-01-04)
+
+
+### Features
+
+* **monitoring:** Add REST client ([06a54a1](https://github.com/googleapis/google-cloud-go/commit/06a54a16a5866cce966547c51e203b9e09a25bc0))
+
 ## [1.9.1](https://github.com/googleapis/google-cloud-go/compare/monitoring/v1.9.0...monitoring/v1.9.1) (2022-12-15)
 
 

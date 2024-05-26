@@ -1,6 +1,98 @@
 # Changes
 
 
+## [1.10.6](https://github.com/googleapis/google-cloud-go/compare/datastream/v1.10.5...datastream/v1.10.6) (2024-05-01)
+
+
+### Bug Fixes
+
+* **datastream:** Add internaloption.WithDefaultEndpointTemplate ([3b41408](https://github.com/googleapis/google-cloud-go/commit/3b414084450a5764a0248756e95e13383a645f90))
+* **datastream:** Bump x/net to v0.24.0 ([ba31ed5](https://github.com/googleapis/google-cloud-go/commit/ba31ed5fda2c9664f2e1cf972469295e63deb5b4))
+
+## [1.10.5](https://github.com/googleapis/google-cloud-go/compare/datastream/v1.10.4...datastream/v1.10.5) (2024-03-14)
+
+
+### Bug Fixes
+
+* **datastream:** Update protobuf dep to v1.33.0 ([30b038d](https://github.com/googleapis/google-cloud-go/commit/30b038d8cac0b8cd5dd4761c87f3f298760dd33a))
+
+## [1.10.4](https://github.com/googleapis/google-cloud-go/compare/datastream/v1.10.3...datastream/v1.10.4) (2024-01-30)
+
+
+### Bug Fixes
+
+* **datastream:** Enable universe domain resolution options ([fd1d569](https://github.com/googleapis/google-cloud-go/commit/fd1d56930fa8a747be35a224611f4797b8aeb698))
+
+## [1.10.3](https://github.com/googleapis/google-cloud-go/compare/datastream/v1.10.2...datastream/v1.10.3) (2023-11-01)
+
+
+### Bug Fixes
+
+* **datastream:** Bump google.golang.org/api to v0.149.0 ([8d2ab9f](https://github.com/googleapis/google-cloud-go/commit/8d2ab9f320a86c1c0fab90513fc05861561d0880))
+
+## [1.10.2](https://github.com/googleapis/google-cloud-go/compare/datastream/v1.10.1...datastream/v1.10.2) (2023-10-26)
+
+
+### Bug Fixes
+
+* **datastream:** Update grpc-go to v1.59.0 ([81a97b0](https://github.com/googleapis/google-cloud-go/commit/81a97b06cb28b25432e4ece595c55a9857e960b7))
+
+## [1.10.1](https://github.com/googleapis/google-cloud-go/compare/datastream/v1.10.0...datastream/v1.10.1) (2023-10-12)
+
+
+### Bug Fixes
+
+* **datastream:** Update golang.org/x/net to v0.17.0 ([174da47](https://github.com/googleapis/google-cloud-go/commit/174da47254fefb12921bbfc65b7829a453af6f5d))
+
+## [1.10.0](https://github.com/googleapis/google-cloud-go/compare/datastream/v1.9.1...datastream/v1.10.0) (2023-07-26)
+
+
+### Features
+
+* **datastream:** Add precision and scale to MysqlColumn ([7cb7f66](https://github.com/googleapis/google-cloud-go/commit/7cb7f66f0646617c27aa9a9b4fe38b9f368eb3bb))
+
+## [1.9.1](https://github.com/googleapis/google-cloud-go/compare/datastream/v1.9.0...datastream/v1.9.1) (2023-06-20)
+
+
+### Bug Fixes
+
+* **datastream:** REST query UpdateMask bug ([df52820](https://github.com/googleapis/google-cloud-go/commit/df52820b0e7721954809a8aa8700b93c5662dc9b))
+
+## [1.9.0](https://github.com/googleapis/google-cloud-go/compare/datastream/v1.8.0...datastream/v1.9.0) (2023-05-30)
+
+
+### Features
+
+* **datastream:** Update all direct dependencies ([b340d03](https://github.com/googleapis/google-cloud-go/commit/b340d030f2b52a4ce48846ce63984b28583abde6))
+
+## [1.8.0](https://github.com/googleapis/google-cloud-go/compare/datastream/v1.7.1...datastream/v1.8.0) (2023-05-10)
+
+
+### Features
+
+* **datastream:** Max concurrent backfill tasks ([31c3766](https://github.com/googleapis/google-cloud-go/commit/31c3766c9c4cab411669c14fc1a30bd6d2e3f2dd))
+
+## [1.7.1](https://github.com/googleapis/google-cloud-go/compare/datastream/v1.7.0...datastream/v1.7.1) (2023-05-08)
+
+
+### Bug Fixes
+
+* **datastream:** Update grpc to v1.55.0 ([1147ce0](https://github.com/googleapis/google-cloud-go/commit/1147ce02a990276ca4f8ab7a1ab65c14da4450ef))
+
+## [1.7.0](https://github.com/googleapis/google-cloud-go/compare/datastream/v1.6.0...datastream/v1.7.0) (2023-03-15)
+
+
+### Features
+
+* **datastream:** Update iam and longrunning deps ([91a1f78](https://github.com/googleapis/google-cloud-go/commit/91a1f784a109da70f63b96414bba8a9b4254cddd))
+
+## [1.6.0](https://github.com/googleapis/google-cloud-go/compare/datastream/v1.5.0...datastream/v1.6.0) (2023-01-04)
+
+
+### Features
+
+* **datastream:** Add REST client ([06a54a1](https://github.com/googleapis/google-cloud-go/commit/06a54a16a5866cce966547c51e203b9e09a25bc0))
+
 ## [1.5.0](https://github.com/googleapis/google-cloud-go/compare/datastream/v1.4.0...datastream/v1.5.0) (2022-11-03)
 
 
